@@ -1,0 +1,176 @@
+p {
+    margin: 10px;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.map-overlay {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.8);
+    margin-right: 20px;
+    overflow: auto;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.collapse {
+    position: fixed;
+    padding: 3px;
+}
+
+.close-container {
+    float: right;
+    margin-right: 10px;
+}
+
+.close {
+    color: #aaaaaa;
+    font-weight: bold;
+    position: fixed;
+    cursor: pointer;
+}
+
+#results-box {
+    left: 0;
+    top: 0;
+    height: 250px;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 250px;
+}
+
+#info-box {
+    left: 300px;
+    top: 0;
+    height: 400px;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 250px;
+}
+
+#picture-box {
+    left: 600px;
+    top: 0; 
+    height: 250px; 
+    width: 250px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+#error-message {
+    right: 0;
+    bottom: 100px;
+    height: 100px;
+    width: 300px;
+    margin-left: 20px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: rgba(255, 0, 0, 0.8);
+}
+
+#error-message p {
+    color: black; 
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+}
+
+.tab button:hover {
+    background-color: #aaaaaa;
+}
+
+.tabcontent img {
+    display: block;
+    width: 100%;
+    height: 190px;
+}
+
+#bottom-box {
+    bottom: 0; 
+    height: 75px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#slider-container {
+    float: left;
+    width: 50%;
+}
+
+#slider {
+    width: 85%;
+}
+
+#age-filter-container {
+    float: right;
+    width: 50%;
+    overflow: hidden;
+}
+
+#start-date-container {
+    float: left; 
+    width: 50%;
+}
+
+#end-date-container {
+    float: right; 
+    width: 50%;
+}
+
+#type-select {
+    top: 50px;
+    right: 0;
+    height: 50px; 
+    width: 100px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+.circle {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px; 
+    text-align: center; 
+    vertical-align: middle; 
+}
+
+#filter-help {
+    float: left; 
+    margin-left: 5px; 
+    bottom: 100px; 
+}
+
+#filter-help-text {
+    bottom: 100px; 
+    left: 60px; 
+}
+
+#search-help {
+    float: top; 
+    right: 230px;
+}
+
+#search-help-text {
+    right: 285px; 
+    margin-left: 20px;
+}
+
+#type-select-collapse {
+    top: 75px; 
+    right: 25px; 
+    width: 10px;
+    text-align: center; 
+    color: #aaaaaa;
+    font-weight: bold;
+}

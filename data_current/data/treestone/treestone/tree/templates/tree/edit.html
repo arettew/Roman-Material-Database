@@ -1,0 +1,20 @@
+<!DOCTYPE html> 
+<html>
+    <head> 
+        <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/edit-approve-styles.css' %}" />
+    </head>
+
+    <div id=container>
+        <div class="overlay" id="object-container">
+            <h3>Original Object</h3>
+            {% for field in object %}
+                {{ field }}
+            {% endfor %}
+        </div>
+        <div class="overlay" id="edit-container">
+            <h3>Proposed Edits</h3>
+        </div>
+    </div> 
+</html>

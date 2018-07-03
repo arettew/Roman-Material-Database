@@ -74,8 +74,6 @@ def map_csv(csvfile, headers=True):
 
         bibliography.save()
 
-       
-
 
 class Command(BaseCommand):
 
@@ -94,5 +92,5 @@ class Command(BaseCommand):
 
         # open the file using a with statement, so that the program
         # closes the file cleanly. This is standard python practice.
-        with open(options['path'], 'r', errors='replace') as csvfile:
+        with open(options['path'], 'r') as csvfile:
             map_csv(csvfile)

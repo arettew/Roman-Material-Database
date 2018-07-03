@@ -1,0 +1,142 @@
+<!DOCTYPE html> 
+<html> 
+    <head>
+        <!-- Mapbox -->
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+
+        <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
+        <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css'/>
+
+        <!-- Turf -->
+        <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+        <!-- Jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/map-styles.css' %}" />
+
+        <!--  JS -->
+        <script src="{% static 'tree/map-scripts.js' %}"></script>
+        <script src="{% static 'tree/map-load.js' %}"></script>
+    </head>
+
+    <div id='map'></div>
+
+    <div class='map-overlay popup' id='results-box'></div>
+
+    <div class='map-overlay popup' id='info-box'></div>
+
+    <div class='map-overlay' id='bottom-box'>
+        <div id="slider-container">
+            <input type="range" min="0" max="2000" value="1000" id="slider">
+            <!-- Change text if starting value changes -->
+            <p>Search radius: <span id="slider-value">1000km</span></p>
+        </div>
+
+        <div id="age-filter-container">
+            <div id="start-date-container">
+                Start date:<input type="text" size="6" class="date-filter-text" id="start-date">
+                <input type="radio" name="start-era" value="BCE" class="date-filter-radio">BCE</input>
+                <input type="radio" name="start-era" value="CE" class="date-filter-radio">CE</input>
+            </div>
+            <div id="end-date-container">
+                End date:<input type="text" size="6" class="date-filter-text" id="end-date">
+                <input type="radio" name="end-era" value="BCE" class="date-filter-radio">BCE</input>
+                <input type="radio" name="end-era" value="CE" class="date-filter-radio">CE</input>
+            </div>
+            <button type="button" id="clear-dates">Clear dates</button>
+        </div>
+    </div>
+
+    <div class="map-overlay circle" id="filter-help">?</div>
+    <div class="map-overlay help-text" id="filter-help-text">
+        Use the search radius slider to control the proximity of your results!
+        The map will be searched within a bounding box centered on the point, with
+        the distance to each side being controlled by the slider. You can also 
+        limit the results of your search with a start date and end date. This is only supported
+        for stones. 
+    </div>
+
+    <div class="map-overlay circle" id="search-help">?</div>
+    <div class="map-overlay help-text" id="search-help-text">
+        Select whether you want to search for trees, stones, or both! If an option is selected, 
+        objects of this type will show up in search results. You can use the search bar to search for 
+        modern locations. Upon entering a location, the map will fly to that spot and a query will be launched 
+        based on your filter parameters. 
+    </div>
+
+    <div class='map-overlay popup' id='picture-box'></div>
+
+    <!--  TODO: make this collapsable -->
+    <div class='map-overlay' 'collapsable' id='type-select'>
+        <input type="checkbox" id="check-trees" checked>Trees<br>
+        <input type="checkbox" id="check-stones" checked>Stones<br>
+    </div>
+    <div class='collapse' id='type-select-collapse'>-</div>
+
+    <div class="map-overlay popup" id="error-message"></div>
+
+    <!-- This script must be included in the same file as the map container in order to work -->
+    <script>
+        //  Loads map to page. These functions cannot be wrapped in $(document).ready() 
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYXJldHRldyIsImEiOiJjamkzbThlM3QwMDBnM3JsMnQwODluOTl2In0.VbhpiBUw0Ns-e_Q9btkDhA';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v9'
+        });
+        map.dragRotate.disable();
+
+        var geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken
+        });
+
+        map.addControl(geocoder);
+
+        //  Adds data to map upon load 
+        map.on('load', function(e) {
+            //  Grabs geoJSON data for each item in the database with an entry in this field
+            loadFeatureData('trees');
+            loadFeatureData('stones');
+
+            map.addSource('point', {
+                'type': 'geojson',
+                data: {
+                    'type': 'FeatureCollection',
+                    'features': []
+                }
+            });
+
+            map.addLayer({
+                'id': 'point',
+                'source': 'point',
+                'type': 'circle'
+            });
+        });
+    
+        //  Searches for tress/stones based on click 
+        map.on('click', function(e) {
+            //  Set point on location of click 
+            var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
+            map.getSource('point').setData(point);
+
+            var suppressZoomError = false; 
+            search(e, suppressZoomError);
+        });
+
+        geocoder.on('result', function(ev) {
+            //  Set point on location of search 
+            map.getSource('point').setData(ev.result.geometry);
+
+            //  Create object that imitates the result of a mapbox result for clicking 
+            var lngLat = {"lng": ev.result.center[0], "lat": ev.result.center[1]};
+            var point = map.project(lngLat);
+            var e = {"lngLat": lngLat, "point": point};
+
+            var suppressZoomError = true; 
+            search(e, suppressZoomError);
+        });
+    </script>
+</html>

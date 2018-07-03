@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+SECRET_KEY = os.environ['SECRET_KEY']
+
 
 # Application definition
 
@@ -37,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'treestone.tree',
-    'import_export' #projectName.entity.
+    'import_export', #projectName.entity.
+    'treestone.tree'
 ]
 
 MIDDLEWARE = [
@@ -77,15 +79,15 @@ WSGI_APPLICATION = 'treestone.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'treestone',
         'USER': 'treestone',
         'PASSWORD': 'Rn*2011062',
         'HOST': 'localhost',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
+        #'OPTIONS': {
+            #'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            #'charset': 'UTF8',
+        #},
         'PORT': '',
     },
 }
@@ -129,6 +131,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -144,4 +149,6 @@ LOGGING = {
         },
     },
 }
+
+DEFAULT_CHARSET = 'utf-8'
 

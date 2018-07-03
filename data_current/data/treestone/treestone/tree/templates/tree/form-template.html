@@ -1,0 +1,20 @@
+<style>
+    textarea {
+        width: 400px;
+        height: 100px;
+    }
+    #hidden {
+        display: none;
+    }
+</style>
+
+<form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <table>
+                {{ form.as_table }}
+            </table>
+            <textarea id="hidden"></textarea>
+            <button type='submit'>submit</button>
+        </div>
+</form>

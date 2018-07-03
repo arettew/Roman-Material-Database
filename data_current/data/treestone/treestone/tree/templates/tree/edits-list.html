@@ -1,0 +1,31 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+    <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/edit-list-styles.css' %}" />
+    </head>
+
+    <div id='edits-container'>
+        <div class='overlay' id='tree-edits'>
+            <h3>Edits to trees</h3>
+            <ul>
+            {% for edit in tree_edits_list %}
+                <li><a href="#">{{ edit.main_object.common_name }}</a></li>
+            {% empty %}
+                <li>No edits for this object</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class='overlay' id='stone-edits'>
+            <h3>Edits to stones</h3>
+            <ul>
+                {% for edit in stone_edits_list %}
+                    <li><a href="#">{{ edit.main_object.name }}</a></li>
+                {% empty %}
+                    <li>No edits for this object</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</html>

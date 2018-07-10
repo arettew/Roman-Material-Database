@@ -1,0 +1,55 @@
+<!DOCTYPE html> 
+<html>
+    <head> 
+        <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/edit-approve-styles.css' %}" />
+
+        <!-- Template tags -->
+        {% load tags %}
+    </head>
+
+    <script>
+        function changeColor() {
+            document.body.style.background = "lightblue";
+        }
+
+        window.onload = function() { 
+            if ("{{ type }}" == "stones") {
+                changeColor(); 
+            }
+        }
+    </script>
+
+    <div id=container>
+        <div class="overlay" id="object-container">
+            <h3>Original Object</h3>
+            {% for attr in attributes %}
+                <strong>{{ attr }}</strong><br> 
+                <p>{{ object|get_item:attr}}</p><br>
+            {% endfor %}
+        </div>
+        <div class="overlay" id="edit-container">
+            <h3>Proposed Edits</h3>
+            {% for attr in attributes %}
+                <strong>{{ attr }}</strong><br>
+                {% if edit_object|get_item:attr %}
+                    <p style="color:red">{{ edit_object|get_item:attr }}</p>
+                {% else %}
+                    <p>{{ object|get_item:attr }}</p><br>
+                {% endif %}
+            {% endfor %}
+
+            {% if citation %}
+                <a href="/media/{{  citation  }}" download>Citation</a>
+            {% endif %}
+        </div>
+        <div id=form-container>
+            <form action="" method="post">
+                {% csrf_token %}
+                <button name="decision" value="approve">Approve</button>
+                <button name="decision" value="reject">Reject</button>
+            </form>
+        </div>
+    </div>
+</html>

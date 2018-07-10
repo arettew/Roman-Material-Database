@@ -22,6 +22,12 @@
 			\item Filtering by type: The user can select whether they want to look for stones and/or trees, as specified by a checkbox in a map overlay. When one of the items is selected, when the user clicks. queryRenderedFeatures() is called for the layer specified (either "trees" or "stones"). If one (or both) of the types is not selected, the layer is not queried.  
 			\item Filtering by age: This is only relevant for stones, as only stones have a start and end date specified. The user can specify start and end dates through text fields for the numerical year and radio buttons for a choosing between BCE/CE. If the dates are invalid (a year or era is specified but not both or the start date is after the end date), the user is shown an error message and the date filters are not applied. If the dates are valid, then before the query, a filter (according to Mapbox's style specifications), is created and applied that filters stones for a start date greater than the user's specified start bound (translated to negative/positive rather than BCE/CE) and/or an end date less than the user's specified end bound. 
 		\end{itemize} 
+	\item Editing objects: Users can submit edits to Trees and Stones that can be saved upon admin approval. Currently, changing GeoJSON and images are not supported. Adding items is currently not supported. 
+		\begin{itemize}
+			\item Forms: There are currently two forms, one for Stone objects and one for Tree Objects. Since they are designed using Django's UpdateView, the fields prepopulate with the database information of the item with the pk specified in the URL. 
+			\item Models: There are two models that store changes: TreeEdits and StoneEdits. The Edits models share attribute names with the Trees and Stones models, as well as additional fields: one foreign point which refers to the object which was edited, and one optional citation FileField. 
+			\item Approval: When a user is logged in, they can access the "/edits-list" page, which displays all unapproved edits. This page links to individual detail pages for edits, which shows the changeable traits of the original object next to another object with the proposed edits, with each change written in red. From here, the edits can be either accepted or rejected, upon which the changes will either be saved then deleted or simply deleted. 
+\end{itemize}
 \end{enumerate} 
 
 \end{document}

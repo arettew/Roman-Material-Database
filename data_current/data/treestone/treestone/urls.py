@@ -19,20 +19,23 @@ from django.conf import settings
 from django.conf.urls.static import static 
 
 from treestone.tree.views import StonesListView
-from treestone.tree.views import MapView
+from treestone.tree.views import MapView, HomeView
 from treestone.tree.views import TreeUpdate, StoneUpdate
-from treestone.tree.views import TreeEdits
-from treestone.tree.views import EditListView, TreeEditApproveView
+from treestone.tree.views import EditListView, TreeEditApproveView, StoneEditApproveView
+from treestone.tree.views import RejectView
 from treestone.tree import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^csv/mymodel', StonesListView.as_view(), name='mymodel_csv'),
     url(r'^map', MapView.as_view(), name='map'),
     url(r'^get_features', views.get_features, name='get_features'),
     url(r'^result_info', views.result_info, name='result_info'),
-    url(r'^tree/edit/(?P<pk>\d+)/$', TreeUpdate.as_view(), name='tree-update'),
-    url(r'^stone/edit/(?P<pk>\d+)/$', StoneUpdate.as_view(), name='stone-update'),
+    url(r'^trees/edit/(?P<pk>\d+)/$', TreeUpdate.as_view(), name='tree-update'),
+    url(r'^stones/edit/(?P<pk>\d+)/$', StoneUpdate.as_view(), name='stone-update'),
     url(r'^edits-list', EditListView.as_view(), name='edits-list'),
-    url(r'^tree/approve/(?P<pk>\d+)/$', TreeEditApproveView.as_view(), name='tree-edit-approve')
+    url(r'^trees/approve/(?P<pk>\d+)/$', TreeEditApproveView.as_view(), name='tree-edit-approve'),
+    url(r'^stones/approve/(?P<pk>\d+)/$', StoneEditApproveView.as_view(), name='stone-edit-approve'),
+    url(r'^(?P<type>\w+)/approve/reject/(?P<pk>\d+)/$', RejectView.as_view(), name='tree-reject')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

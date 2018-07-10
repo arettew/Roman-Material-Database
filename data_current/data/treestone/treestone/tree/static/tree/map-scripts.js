@@ -200,8 +200,6 @@ function validateZoom(e, searchRadius) {
     var nePoint = turf.point([ne.lng, ne.lat]);
     var bboxDiagonal = turf.distance(swPoint, nePoint);
 
-    console.log(bboxDiagonal);
-
     //  Mapbox's functions are less accurate here, returning a smaller radius 
     if (Math.abs(e.lngLat.lat) > 70) {
         showErrorMessage("There isn't any data in this section of the map.");
@@ -209,15 +207,15 @@ function validateZoom(e, searchRadius) {
     }
 
     if (bboxDiagonal * 2 < searchRadius) {
-        showErrorMessage("Your search radius is much larger than your current view. Try zooming out!");
+        showErrorMessage("Your search radius is larger than your current view. Try zooming out!");
     }
 
-    const MIN_SAFE_DIAG = 3500;
+    const MIN_SAFE_DIAG = 3000;
     if (bboxDiagonal < MIN_SAFE_DIAG) {
         return 
     }
     if (searchRadius * 4 < bboxDiagonal) {
-        showErrorMessage("Your search radius is much smaller than your current view. Try zooming in!");
+        showErrorMessage("Your search radius is smaller than your current view. Try zooming in!");
     }
 }
 
@@ -298,32 +296,35 @@ function displayInfo(item) {
             'itemType': type
         },
         success: function(data) {
-            //  The key to the imageUrls entry (set in view)
-            const imageUrlsId = "image_urls"
-
             //  Adds close button 
             var info = getCloseHtml();
 
             //  Adds info to window 
             info += "<h3>" + itemName + "</h3>";
-            for (attribute in data) {
-                if (attribute == imageUrlsId) {
-                    continue;
-                }
-                if (data[attribute] == null) {
+            var attributes = data["attributes"]
+            for (attribute in attributes) {
+                if (attributes[attribute] == null) {
                     // Prefer an empty string to a null value 
-                    data[attribute] = "";
+                    attributes[attribute] = "";
                 }
                 info += "<b>" + attribute + "</b></br>";
-                info += "<p>" + data[attribute] + "</p> ";
+                info += "<p>" + attributes[attribute] + "</p> ";
             }
-            $('#info-box').html(info);
+            if (data["user"]) {
+                editLink = "/" + type + "/edit/" + data["pk"] + "/"
+                info += "<br><div class='right'><a href='" + editLink + "'>Edit</a></div>"
+            }
+            $("#info-box").html(info);
             $("#info-box").show();
+
+            //  Move edit link to right 
+            $('.right').css('text-align', 'right')
+            $('.right').css('float', 'right')
 
             showFeatureGeography(type, itemName);
 
             //  Shows images if they exist 
-            imageUrls = data[imageUrlsId];
+            imageUrls = data["image_urls"];
             if (imageUrls != undefined && imageUrls.length > 0) {
                 showImages(imageUrls);
             }
@@ -340,8 +341,11 @@ function displayInfo(item) {
 //  Filters the map so that the feature to be shown is highlighted
 function showFeatureGeography(type, itemName) {
     map.setFilter(type + "-highlighted", null);
-    map.setFilter(type + "-highlighted", ['==', 'name', itemName]);
+    map.setFilter(type + "-point", null);
+    map.setFilter(type + "-point", ['all', ['==', '$type', 'Point'], ['==', 'name', itemName]]);
+    map.setFilter(type + "-highlighted", ['all', ['==', '$type', 'Polygon'], ['==', 'name', itemName]]);
     map.setLayoutProperty(type + "-highlighted", 'visibility', 'visible');
+    map.setLayoutProperty(type + "-point", 'visibility', 'visible');
 }
 
 //  Shows the images associated with a search result. 

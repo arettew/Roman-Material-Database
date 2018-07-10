@@ -10,6 +10,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.urlresolvers import reverse
 
+from django.contrib.auth.models import User
+
 
 class Bibliography(models.Model):
     bibliography_id = models.AutoField(primary_key=True)
@@ -126,6 +128,11 @@ class StoneEdits(models.Model):
     compressive_strength_average = models.FloatField(blank=True, null=True)
     compressive_strength_low = models.FloatField(blank=True, null=True)
     compressive_strength_high = models.FloatField(blank=True, null=True)
+    citation = models.FileField(upload_to="stones/edits", null=True, blank=True)
+    user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
+    
+    def get_absolute_url(self):
+        return reverse('stone-edit-approve', kwargs={'pk': self.pk})
 
 
 
@@ -188,6 +195,7 @@ class TreeEdits(models.Model):
     tree_height_low = models.FloatField(blank=True, null=True)
     tree_height_high = models.FloatField(blank=True, null=True)
     citation = models.FileField(upload_to="trees/edits", null=True, blank=True)
+    user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('tree-edit-approve', kwargs={'pk': self.pk})

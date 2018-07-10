@@ -59,7 +59,7 @@ function addFeatureData(map, data, featureType) {
         "source": featureType,
         "paint": {
             "fill-color": "#888888",
-            //  The goal is to make this invisible, but layer must be  set to 
+            //  The goal is to make this effectively invisible, but layer must be  set to 
             //  visible in order to be able to query
             "fill-opacity": 0.01
         }
@@ -76,6 +76,18 @@ function addFeatureData(map, data, featureType) {
         "paint": {
             "fill-color": "#6e599f",
             "fill-opacity": 0.5
+        }
+    });
+
+    map.addLayer({
+        "id": featureType + "-point",
+        "type": "circle",
+        "source": featureType,
+        "layout": {
+            "visibility": "none"
+        },
+        "paint": {
+            "circle-radius": 5
         }
     });
 }

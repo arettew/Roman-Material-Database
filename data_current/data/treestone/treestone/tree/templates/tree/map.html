@@ -57,7 +57,8 @@
         The map will be searched within a bounding box centered on the point, with
         the distance to each side being controlled by the slider. You can also 
         limit the results of your search with a start date and end date. This is only supported
-        for stones. 
+        for stones. You may miss certain features that are present only within a small area if you 
+        zoom too far out, so be careful!
     </div>
 
     <div class="map-overlay circle" id="search-help">?</div>
@@ -85,14 +86,15 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiYXJldHRldyIsImEiOiJjamkzbThlM3QwMDBnM3JsMnQwODluOTl2In0.VbhpiBUw0Ns-e_Q9btkDhA';
         var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v9'
+            style: 'mapbox://styles/mapbox/streets-v9',
+            center: [10.6, 49.0],
+            zoom: 3
         });
         map.dragRotate.disable();
 
         var geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken
         });
-
         map.addControl(geocoder);
 
         //  Adds data to map upon load 
@@ -119,8 +121,8 @@
         //  Searches for tress/stones based on click 
         map.on('click', function(e) {
             //  Set point on location of click 
-            var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
-            map.getSource('point').setData(point);
+            //var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
+            //map.getSource('point').setData(point);
 
             var suppressZoomError = false; 
             search(e, suppressZoomError);
@@ -128,7 +130,7 @@
 
         geocoder.on('result', function(ev) {
             //  Set point on location of search 
-            map.getSource('point').setData(ev.result.geometry);
+            //map.getSource('point').setData(ev.result.geometry);
 
             //  Create object that imitates the result of a mapbox result for clicking 
             var lngLat = {"lng": ev.result.center[0], "lat": ev.result.center[1]};

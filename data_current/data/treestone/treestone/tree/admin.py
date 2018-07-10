@@ -8,7 +8,7 @@ from import_export.admin import ImportExportModelAdmin
 
 
 class TreesAdmin(ImportExportModelAdmin):
-    list_display = ('sci_name',)
+    list_display = ('common_name',)
     search_fields = ('common_name', 'sci_name',)
     #list_display changes what is visible once you add data to your django admin
 class BibliographyAdmin(ImportExportModelAdmin):

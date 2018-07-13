@@ -18,7 +18,16 @@ def getEdit(materialType, pk):
   elif materialType == 'trees':
     return TreeEdits.objects.get(pk=pk)
   else:
-    return None
+    raise ValueError("Invalid materialType")
+
+# Returns an tree or stone object based on materialType
+def getObject(materialType, pk):
+  if materialType == 'stones': 
+    return Stones.objects.get(pk=pk)
+  elif materialType == 'trees': 
+    return Trees.objects.get(pk=pk)
+  else: 
+    raise ValueError("Invalid materialType")
 
 # -----------------------------------------------------------------------
 # Helpers for get-features
@@ -60,6 +69,29 @@ def addUnitsOfMeasurement(attributes):
       val = str(attributes[attr])
       val += units
       attributes[attr] = val
+
+# -----------------------------------------------------------------------
+# Helpers for forms (TreeForm/StoneForm)
+# -----------------------------------------------------------------------
+import geojson 
+
+# Validate that a geoJSON file is valid for a TreeForm or StoneForm
+def validateGeojson(self, geojsonFile): 
+  if geojsonFile is None: 
+    return 
+  if not geojsonFile.name.endswith('.geojson'):
+    self.add_error('geojson_file', "Illegal file type")
+    return 
+  
+  geojsonString = geojsonFile.read()
+  try: 
+    geojsonObject = geojson.loads(geojsonString)
+    if not geojsonObject.is_valid: 
+      self.add_error('geojson_file', "Illegal GeoJSON")
+  except: 
+    self.add_error('geojson_file', "Illegal GeoJSON")
+
+  self.cleaned_data["geojson"] = geojsonString
 
 # -----------------------------------------------------------------------
 # Helpers for TreeUpdateView/StoneUpdateView
@@ -109,12 +141,18 @@ def createContext(context, materialType):
   except: 
     pass
 
+  try: 
+    attributes.remove('geojson')
+  except: 
+    pass
+
   context.update({
     'object': object_dict,
     'edit_object': edit_object_dict,
     'attributes': attributes,
     'citation': citation,
-    'type': materialType
+    'type': materialType,
+    'edit_pk': edit.pk
   })
   return context
 

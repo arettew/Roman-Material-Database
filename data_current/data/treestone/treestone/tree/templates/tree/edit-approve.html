@@ -1,27 +1,25 @@
 <!DOCTYPE html> 
 <html>
     <head> 
+        <!-- Mapbox -->
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+
+        <!-- Jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
         <!--  CSS -->
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'tree/edit-approve-styles.css' %}" />
+
+        <!--  JS -->
+        <script src="{% static 'tree/edit-approve-scripts.js' %}"></script>
 
         <!-- Template tags -->
         {% load tags %}
     </head>
 
-    <script>
-        function changeColor() {
-            document.body.style.background = "lightblue";
-        }
-
-        window.onload = function() { 
-            if ("{{ type }}" == "stones") {
-                changeColor(); 
-            }
-        }
-    </script>
-
-    <div id=container>
+    <div id="container">
         <div class="overlay" id="object-container">
             <h3>Original Object</h3>
             {% for attr in attributes %}
@@ -44,7 +42,7 @@
                 <a href="/media/{{  citation  }}" download>Citation</a>
             {% endif %}
         </div>
-        <div id=form-container>
+        <div id="form-container">
             <form action="" method="post">
                 {% csrf_token %}
                 <button name="decision" value="approve">Approve</button>
@@ -52,4 +50,49 @@
             </form>
         </div>
     </div>
+    <div id="map"></div>
+
+    
+
+    <!-- Some scripts are kept in this file to take advantage of Django templating -->
+    <script>
+        //  Change background to blue if the edit is a StonEdit
+        $(document).ready(function() { 
+            if ("{{ type }}" == "stones") {
+                changeColor(); 
+            }
+        });
+        
+        var map;
+        //  Show the map on the page
+        function showMap() {
+            mapboxgl.accessToken = 'pk.eyJ1IjoiYXJldHRldyIsImEiOiJjamkzbThlM3QwMDBnM3JsMnQwODluOTl2In0.VbhpiBUw0Ns-e_Q9btkDhA';
+            map = new mapboxgl.Map({
+                container: 'map', 
+                style: 'mapbox://styles/mapbox/streets-v9'
+            });
+        }
+
+        $.ajax({
+            url: '/approve-geojson/',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                'pk': "{{ edit_pk }}",
+                'type': '{{ type }}'
+            },
+            success: function(data) {
+                if (!data['editGeojson']) {
+                    hideMap();
+                }
+                else {
+                    showMap();
+                    map.on('load', function(e) {
+                        loadGeojson(data);
+                    });
+                }
+            }
+        }); 
+    </script>
+
 </html>

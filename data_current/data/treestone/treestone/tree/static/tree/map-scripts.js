@@ -165,6 +165,7 @@ function search(e, supressZoomError) {
 
     $("#results-box").html(searchResults);
     $("#results-box").show();
+    $("li").css('cursor', 'pointer');
 
 }
 
@@ -310,16 +311,20 @@ function displayInfo(item) {
                 info += "<b>" + attribute + "</b></br>";
                 info += "<p>" + attributes[attribute] + "</p> ";
             }
+            var downloadLink = "/geojson/" + type + "/" + data["pk"]
+            info += "<br><div class='left'><a href='" + downloadLink + "'>Download GeoJSON</a></div>"
             if (data["user"]) {
-                editLink = "/" + type + "/edit/" + data["pk"] + "/"
-                info += "<br><div class='right'><a href='" + editLink + "'>Edit</a></div>"
+                var editLink = "/" + type + "/edit/" + data["pk"] + "/"
+                info += "<div class='right'><a href='" + editLink + "'>Edit</a></div>"
             }
             $("#info-box").html(info);
             $("#info-box").show();
 
-            //  Move edit link to right 
+            //  Move links to correct locations 
             $('.right').css('text-align', 'right')
             $('.right').css('float', 'right')
+            $('.left').css('text-align', 'left')
+            $('.left').css('float', 'left')
 
             showFeatureGeography(type, itemName);
 

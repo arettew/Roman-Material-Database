@@ -152,7 +152,7 @@ LOGGING = {
 
 DEFAULT_CHARSET = 'utf-8'
 
-# ALLOW LESS SECURE APPS ACCESS MUST BE ALLOWED
+# Allow less secure apps access must be allowed on the account being used 
 EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_HOST_USER = EMAIL HERE
 #EMAIL_HOST_PASSWORD = PASSWORD HERE 

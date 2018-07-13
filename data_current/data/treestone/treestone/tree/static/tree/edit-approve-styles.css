@@ -1,6 +1,6 @@
 #object-container {
     width: 47%; 
-    height: 90%;
+    height: 45%;
     float: left;
     padding: 5px; 
     overflow: auto; 
@@ -8,10 +8,17 @@
 
 #edit-container {
     width: 47%;
-    height: 90%; 
+    height: 45%; 
     float: right; 
     padding: 5px;
     overflow: auto; 
+}
+
+#map { 
+    position:absolute; 
+    bottom:30px; 
+    width:100%; 
+    height: 45%;
 }
 
 h3 {
@@ -26,6 +33,8 @@ h3 {
 
 body {
     background-color: lightgreen; 
+    margin:0; 
+    padding:0; 
 }
 
 html,body {

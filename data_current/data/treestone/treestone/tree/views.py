@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 import csv
 import re
+import json
 
 from django import forms
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -180,33 +181,60 @@ def result_info(request):
 
   return JsonResponse(data)
 
+# Return a geojson file based on the materialType (trees or stones) and pk specified in the URL
+@csrf_exempt 
+def get_geojson_file(request, **kwargs):
+  materialType = kwargs['type']
+  pk = kwargs['pk']
+  try: 
+    item = helper.getObject(materialType, pk)
+  except: 
+    return HttpResponse(status=404)
+    
+  response = HttpResponse(content_type='text/geojson')
+  response['Content-Disposition'] = "attachment; filename='" + str(item) + ".geojson'" 
+  json.dump(json.loads(item.geojson), response)
+  return response
+
 # The form used for objects related to Trees 
 class TreeForm(forms.ModelForm):
   citation = forms.FileField(required=False)
+  geojson_file = forms.FileField(required=False)
   class Meta: 
     model = Trees
     fields = ['common_name', 'sci_name', 'distribution', 'rot_resistance', 'workability', 
             'common_uses', 'notes', 'tree_height_low', 'tree_height_high', 'tree_rad_low', 'tree_rad_high', 'density',
             'janka_hardness', 'rupture_modulus', 'crushing_strength', 'shrink_rad', 'shrink_tan', 
-            'shrink_volumetric', 'citation']
+            'shrink_volumetric', 'citation', 'geojson_file']
+  
+  # Makes sure that the geojson uploaded is valid 
+  def clean(self):
+    geojsonFile = self.cleaned_data["geojson_file"]
+    helper.validateGeojson(self, geojsonFile)
 
 # The form used for objects related to Stones
 class StoneForm(forms.ModelForm):
   citation = forms.FileField(required=False)
+  geojson_file = forms.FileField(required=False)
   class Meta: 
     model = Stones 
     fields = ['name', 'alternate_name', 'age', 'appearance', 'poisson_ratio_low', 'poisson_ratio_high',
             'absorption', 'quarry_location', 'notes', 'dates_of_use', 'start_date', 'end_date', 'dates_notes', 
             'density_low', 'density_high', 'elastic_modulus_average', 'elastic_modulus_low', 'elastic_modulus_high',
             'rupture_modulus_average', 'rupture_modulus_low', 'rupture_modulus_high', 'compressive_strength_average', 
-            'compressive_strength_high', 'compressive_strength_high']
+            'compressive_strength_high', 'compressive_strength_high', 'citation', 'geojson_file']
+  
+  # Makes sure that the geojson uploaded is valid 
+  def clean(self):
+    geojsonFile = self.cleaned_data["geojson_file"]
+    helper.validateGeojson(self, geojsonFile)
 
 # The view which is used to submit updates to tree objects 
 class TreeUpdate(LoginRequiredMixin, UpdateView):
   model = Trees
   # Any changes to fields will need to include a corresponding attribute in the TreeEdits model
   form_class = TreeForm
-  template_name = 'tree/trees-form.html'
+  template_name = 'tree/update-form.html'
 
   def form_valid(self, form):
     edit = TreeEdits()
@@ -219,7 +247,7 @@ class TreeUpdate(LoginRequiredMixin, UpdateView):
 class StoneUpdate(LoginRequiredMixin, UpdateView):
   model = Stones 
   form_class = StoneForm
-  template_name = 'tree/stones-form.html'
+  template_name = 'tree/update-form.html'
 
   def form_valid(self, form):
     edit = StoneEdits()
@@ -277,6 +305,19 @@ class StoneEditApproveView(UserPassesTestMixin, LoginRequiredMixin, DetailView):
   def post(self, request, pk): 
     url = helper.processDecision(request, pk, "stones")
     return HttpResponseRedirect(url)
+
+# Get the edit geoJSON and the main object geoJSON for a edit approval page
+@csrf_exempt
+def approve_geojson(request):
+  pk = request.POST.get('pk', '')
+  materialType = request.POST.get('type', '')
+  edit = helper.getEdit(materialType, pk)
+
+  data = {}
+  data['editGeojson'] = edit.geojson
+  data['mainObjectGeosjon'] = edit.main_object.geojson
+
+  return JsonResponse(data)
 
 # The form used when a staff user rejects an edit
 class RejectForm(forms.Form): 

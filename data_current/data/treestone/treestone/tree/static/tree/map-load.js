@@ -21,8 +21,7 @@ function loadFeatureData(type) {
     });
 }
 
-//  TODO: consider making this a part of the database rather than something 
-//  created with each load 
+//  TODO: consider making this a part of the database rather than something created with each load 
 //  Populates map with feature data, with featureType differentiating between trees and stones
 function addFeatureData(map, data, featureType) { 
 

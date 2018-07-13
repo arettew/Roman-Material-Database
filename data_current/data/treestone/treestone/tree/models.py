@@ -130,6 +130,7 @@ class StoneEdits(models.Model):
     compressive_strength_high = models.FloatField(blank=True, null=True)
     citation = models.FileField(upload_to="stones/edits", null=True, blank=True)
     user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
+    geojson = models.TextField(blank=True, null=True)
     
     def get_absolute_url(self):
         return reverse('stone-edit-approve', kwargs={'pk': self.pk})
@@ -196,6 +197,7 @@ class TreeEdits(models.Model):
     tree_height_high = models.FloatField(blank=True, null=True)
     citation = models.FileField(upload_to="trees/edits", null=True, blank=True)
     user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
+    geojson = models.TextField(blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('tree-edit-approve', kwargs={'pk': self.pk})

@@ -180,11 +180,7 @@ class TestEdits(TestCase):
             reverse("stone-edit-approve", kwargs={"pk": edit.pk}),
             {"decision": "reject"})
 
-        self.assertRedirects(response, "/edits-list/")
-        self.assertFalse(Stones.objects.filter(name="edit").exists())
-        self.assertTrue(Stones.objects.filter(name="fake_stone").exists())
-        self.assertEquals(StoneEdits.objects.all().count(), 0)
-        self.assertEquals(Stones.objects.all().count(), 1)
+        self.assertRedirects(response, "/stones/approve/reject/" + str(edit.pk) + "/")
     
     def test_edit_accept_tree(self): 
         self.client.login(username="staff", password="password")
@@ -206,11 +202,7 @@ class TestEdits(TestCase):
             reverse("tree-edit-approve", kwargs={"pk": edit.pk}),
             {"decision": "reject"})
 
-        self.assertRedirects(response, "/edits-list/")
-        self.assertFalse(Trees.objects.filter(common_name="edit").exists())
-        self.assertTrue(Trees.objects.filter(common_name="fake_tree").exists())
-        self.assertEquals(TreeEdits.objects.all().count(), 0)
-        self.assertEquals(Trees.objects.all().count(), 1)
+        self.assertRedirects(response, "/trees/approve/reject/" + str(edit.pk) + "/")
     
     def test_multiple_edits_accept_tree(self):
         self.client.login(username="staff", password="password")

@@ -50,3 +50,8 @@ html,body {
     left: 5px; 
     position: absolute; 
 }
+
+img {
+    height: 200px;
+    width: 250px; 
+}

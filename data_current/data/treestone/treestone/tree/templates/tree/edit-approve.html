@@ -41,6 +41,11 @@
             {% if citation %}
                 <a href="/media/{{  citation  }}" download>Citation</a>
             {% endif %}
+
+            {% if image_url %}
+                <strong>image</strong><br><br>
+                <img src="{{ image_url }}">
+            {% endif %}
         </div>
         <div id="form-container">
             <form action="" method="post">

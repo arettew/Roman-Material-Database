@@ -131,6 +131,8 @@ class StoneEdits(models.Model):
     citation = models.FileField(upload_to="stones/edits", null=True, blank=True)
     user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
     geojson = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="trees/edit-images", blank=True, null=True)
+
     
     def get_absolute_url(self):
         return reverse('stone-edit-approve', kwargs={'pk': self.pk})
@@ -198,6 +200,8 @@ class TreeEdits(models.Model):
     citation = models.FileField(upload_to="trees/edits", null=True, blank=True)
     user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
     geojson = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="trees/edit-images", blank=True, null=True)
+
 
     def get_absolute_url(self):
         return reverse('tree-edit-approve', kwargs={'pk': self.pk})
@@ -206,10 +210,10 @@ class TreeEdits(models.Model):
 
 class StoneImages(models.Model):
     img = models.ImageField(upload_to="stones", null=True)
-    stone = models.ForeignKey('Stones', models.CASCADE, null=True)
+    main_object = models.ForeignKey('Stones', models.CASCADE, null=True)
 
 
 
 class TreeImages(models.Model): 
     img = models.ImageField(upload_to="trees", null=True)
-    tree = models.ForeignKey('Trees', models.CASCADE, null=True)    
+    main_object = models.ForeignKey('Trees', models.CASCADE, null=True)    

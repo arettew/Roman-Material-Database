@@ -107,6 +107,7 @@ def createEdit(material_type, main_object, data, user):
   for attr in data: 
     if hasattr(edit, attr) and not hasattr(main_object, attr): 
       setattr(edit, attr, data[attr])
+      attrChanged = True
     elif hasattr(main_object, attr) and hasattr(edit, attr):
       if getattr(main_object, attr) != data[attr]:
         setattr(edit, attr, data[attr])
@@ -132,19 +133,19 @@ def createContext(context, materialType):
   citation = edit_object_dict['citation']
 
   # List that will be used to display attributes 
-  attributes = sorted(edit_object_dict)
+  attributes = sorted(edit_object_dict.keys())
   for attr in attributes: 
-    if not attr in object_dict.keys(): 
+    if not hasattr(edit.main_object, attr): 
       attributes.remove(attr)
+
+  attributes.remove('id')
+  attributes.remove('geojson')
   try: 
-    attributes.remove('id')
+    attributes.remove('main_object')
   except: 
     pass
 
-  try: 
-    attributes.remove('geojson')
-  except: 
-    pass
+  image_url = edit.image.url if edit.image else ""
 
   context.update({
     'object': object_dict,
@@ -152,7 +153,8 @@ def createContext(context, materialType):
     'attributes': attributes,
     'citation': citation,
     'type': materialType,
-    'edit_pk': edit.pk
+    'edit_pk': edit.pk,
+    'image_url': image_url
   })
   return context
 
@@ -167,6 +169,7 @@ def processDecision(request, pk, materialType):
     edit = StoneEdits.objects.get(pk=pk) if materialType == 'stones' else TreeEdits.objects.get(pk=pk)
     mainObject = edit.main_object
 
+    # Save edit values over into the main database entry 
     fieldObjects = StoneEdits._meta.get_fields() if materialType == 'stones' else TreeEdits._meta.get_fields()
     for fieldObjects in fieldObjects: 
       field = fieldObjects.name 
@@ -175,7 +178,14 @@ def processDecision(request, pk, materialType):
         continue
       if hasattr(mainObject, field) and getattr(edit, field):
         setattr(mainObject, field, getattr(edit, field))
-   
+    
+    # Save the image, if there is one 
+    if edit.image:
+      newImage = StoneImages() if materialType == "stones" else TreeImages()
+      newImage.img = edit.image
+      newImage.main_object = mainObject
+      newImage.save()
+
     mainObject.save()
     deleteEditObject(materialType, pk)
     url = '/edits-list/'

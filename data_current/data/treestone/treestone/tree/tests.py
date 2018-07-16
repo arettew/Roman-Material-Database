@@ -3,7 +3,7 @@ from treestone.tree.models import Trees, Stones, TreeEdits, StoneEdits
 from django.contrib.auth.models import User 
 from django.core.urlresolvers import reverse
 
-import json
+import json, StringIO 
 
 # Create your tests here.
 
@@ -40,6 +40,9 @@ class TestMapFunctions(TestCase):
         response = self.client.post('/get_features/', {'type': 'stones'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, targetJson)
+
+    def test_get_geojson_file(self):
+        pk = Trees.objects.get(common_name="fake_tree").pk
 
 class TestWebPages(TestCase):
     def setUp(self):
@@ -159,6 +162,110 @@ class TestEdits(TestCase):
             {"main_object": stone, "alternate_name": "alt_name"})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(StoneEdits.objects.filter(alternate_name="alt_name").exists())
+    
+    def test_edit_creation_tree_good_geojson(self):
+        self.client.login(username="user", password="password")
+        tree = Trees.objects.get(common_name="fake_tree") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point", "coordinates": [0, 0]}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("tree-update", kwargs={"pk": tree.pk}),
+            {"main_object": tree, "sci_name": "sci_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(TreeEdits.objects.filter(sci_name="sci_name").exists())
+
+    def test_edit_creation_stone_good_geojson(self):
+        self.client.login(username="user", password="password")
+        stone = Stones.objects.get(name="fake_stone") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point", "coordinates": [0, 0]}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("stone-update", kwargs={"pk": stone.pk}),
+            {"main_object": stone, "alternate_name": "alt_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(StoneEdits.objects.filter(alternate_name="alt_name").exists())
+    
+    def test_edit_creation_tree_bad_geojson(self):
+        self.client.login(username="user", password="password")
+        tree = Trees.objects.get(common_name="fake_tree") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point"}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("tree-update", kwargs={"pk": tree.pk}),
+            {"main_object": tree, "sci_name": "sci_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TreeEdits.objects.filter(sci_name="sci_name").exists())
+
+    def test_edit_creation_stone_bad_geojson(self):
+        self.client.login(username="user", password="password")
+        stone = Stones.objects.get(name="fake_stone") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point"}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("stone-update", kwargs={"pk": stone.pk}),
+            {"main_object": stone, "alternate_name": "alt_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(StoneEdits.objects.filter(alternate_name="alt_name").exists())
+
+    def test_edit_creation_tree_not_geojson_file(self):
+        self.client.login(username="user", password="password")
+        tree = Trees.objects.get(common_name="fake_tree") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point", "coordinates": [0, 0]}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test"
+
+        response = self.client.post(
+            reverse("tree-update", kwargs={"pk": tree.pk}),
+            {"main_object": tree, "sci_name": "sci_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TreeEdits.objects.filter(sci_name="sci_name").exists())
+
+    def test_edit_creation_stone_not_geojson_file(self):
+        self.client.login(username="user", password="password")
+        stone = Stones.objects.get(name="fake_stone") 
+        geojsonFile = StringIO.StringIO('{"geometry": {"type": "Point", "coordinates": [0, 0]}, "type": "Feature", "properties": {}}')
+        geojsonFile.name = "test"
+
+        response = self.client.post(
+            reverse("stone-update", kwargs={"pk": stone.pk}),
+            {"main_object": stone, "alternate_name": "alt_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(StoneEdits.objects.filter(alternate_name="alt_name").exists())
+
+    def test_edit_creation_tree_not_json(self):
+        self.client.login(username="user", password="password")
+        tree = Trees.objects.get(common_name="fake_tree") 
+        geojsonFile = StringIO.StringIO('This is not json')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("tree-update", kwargs={"pk": tree.pk}),
+            {"main_object": tree, "sci_name": "sci_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TreeEdits.objects.filter(sci_name="sci_name").exists())
+
+    def test_edit_creation_stone_not_json(self):
+        self.client.login(username="user", password="password")
+        stone = Stones.objects.get(name="fake_stone") 
+        geojsonFile = StringIO.StringIO('This is not json')
+        geojsonFile.name = "test.geojson"
+
+        response = self.client.post(
+            reverse("stone-update", kwargs={"pk": stone.pk}),
+            {"main_object": stone, "alternate_name": "alt_name", "geojson_file": geojsonFile})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(StoneEdits.objects.filter(alternate_name="alt_name").exists())
     
     def test_edit_accept_stone(self): 
         self.client.login(username="staff", password="password")

@@ -159,9 +159,9 @@ def result_info(request):
   # Get associated image urls if they exist 
   image_urls = []
   if itemType == 'trees':
-    images = TreeImages.objects.filter(tree__common_name=itemName)
+    images = TreeImages.objects.filter(main_object__common_name=itemName)
   elif itemType == 'stones':
-    images = StoneImages.objects.filter(stone__name=itemName)
+    images = StoneImages.objects.filter(main_object__name=itemName)
   for image in images: 
     image_urls.append(image.img.url)
 
@@ -200,15 +200,16 @@ def get_geojson_file(request, **kwargs):
 class TreeForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
+  image = forms.ImageField(required=False)
   class Meta: 
     model = Trees
     fields = ['common_name', 'sci_name', 'distribution', 'rot_resistance', 'workability', 
             'common_uses', 'notes', 'tree_height_low', 'tree_height_high', 'tree_rad_low', 'tree_rad_high', 'density',
             'janka_hardness', 'rupture_modulus', 'crushing_strength', 'shrink_rad', 'shrink_tan', 
-            'shrink_volumetric', 'citation', 'geojson_file']
+            'shrink_volumetric', 'geojson_file', 'image', 'citation']
   
   # Makes sure that the geojson uploaded is valid 
-  def clean(self):
+  def clean_geojson_file(self):
     geojsonFile = self.cleaned_data["geojson_file"]
     helper.validateGeojson(self, geojsonFile)
 
@@ -216,16 +217,17 @@ class TreeForm(forms.ModelForm):
 class StoneForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
+  image = forms.ImageField(required=False)
   class Meta: 
     model = Stones 
     fields = ['name', 'alternate_name', 'age', 'appearance', 'poisson_ratio_low', 'poisson_ratio_high',
             'absorption', 'quarry_location', 'notes', 'dates_of_use', 'start_date', 'end_date', 'dates_notes', 
             'density_low', 'density_high', 'elastic_modulus_average', 'elastic_modulus_low', 'elastic_modulus_high',
             'rupture_modulus_average', 'rupture_modulus_low', 'rupture_modulus_high', 'compressive_strength_average', 
-            'compressive_strength_high', 'compressive_strength_high', 'citation', 'geojson_file']
+            'compressive_strength_high', 'compressive_strength_high', 'geojson_file', 'image', 'citation']
   
   # Makes sure that the geojson uploaded is valid 
-  def clean(self):
+  def clean_geojson_file(self):
     geojsonFile = self.cleaned_data["geojson_file"]
     helper.validateGeojson(self, geojsonFile)
 

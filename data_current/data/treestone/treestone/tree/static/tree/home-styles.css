@@ -1,5 +1,5 @@
 body {
-    background: linear-gradient(90deg, lightgreen 50%, lightblue 50%);
+    background: lightblue; 
 }
 
 .overlay {
@@ -18,4 +18,13 @@ body {
     right: 0; 
     margin: auto; 
     text-align: center;
+}
+
+#map-container {
+    text-align: center;
+}
+
+#login-container {
+    float: bottom; 
+    text-align: center; 
 }

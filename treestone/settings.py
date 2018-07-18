@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'treestone.wsgi.application'
 import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')
+        default=os.environ['DATABASE_URL']
     )
 }
 

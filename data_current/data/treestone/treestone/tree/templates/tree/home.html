@@ -1,10 +1,11 @@
 <!DOCTYPE html> 
-<head>
-    <!--  CSS -->
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'tree/home-styles.css' %}" />
-</head>
 <html>
+    <head>
+        <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/home-styles.css' %}" />
+    </head>
+
     <div class=overlay id="text-container">
         <p> Welcome to the Heritage Structures Lab's Roman Materials Database!
             The Historic Materials Database is an interactive database of construction materials used in antiquity.
@@ -14,11 +15,18 @@
             study the past. The project offers an interactive map which can be used to gather information on construction 
             materials within a geographical area based on the user's filters. 
         </p>
+        <p> An account is required to edit information on this site but not to use other features.</p>
         <div class="map-container">
             <a href="/map/">Go to Map</a>
         </div>
-        <div class="login-container">
-            <a href="#">Login or Register</a>
-        </div>
+        {% if user.is_authenticated %}
+            <div class="logout-container">
+                <a href="/logout/">Logout</a>
+            </div>
+        {% else %}
+            <div class="login-container">
+                <a href="/accounts/login/">Login</a> or <a href="/accounts/register/">Register</a>
+            </div>
+        {% endif %}
     </div>
 </html>

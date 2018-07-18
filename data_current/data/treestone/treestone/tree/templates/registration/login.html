@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <!--  CSS -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'registration/login-styles.css' %}" />
+    </head>
+
+    <div class="overlay" id="form-container">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{  form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+        <a href="/password-reset/">Forgot password?</a>
+    </div>
+</html>

@@ -1,8 +1,6 @@
 from django.shortcuts import render
 
-import csv
-import re
-import json
+import csv, re, json
 
 from django import forms
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -14,11 +12,13 @@ from django.views.generic.edit import FormView, UpdateView
 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
 
 #from treestone.tree.models import the model that you are using in model = MyModel
 from treestone.tree.models import Stones, StoneImages, StoneEdits
 from treestone.tree.models import Trees, TreeImages, TreeEdits
+from django.contrib.auth.models import User
 
 # Import helper functions for the CBVs 
 import viewhelpers as helper
@@ -94,18 +94,34 @@ retreiving specific objects with filters
 class HomeView(TemplateView):
   template_name = "tree/home.html"
 
+# Form to register for the site 
+class SignupForm(UserCreationForm):
+  email = forms.EmailField()
+
+# View that controls the registration page 
+class RegisterView(FormView):
+  form_class = SignupForm
+  template_name = 'registration/register.html'
+
+  # Saves user if the SignupForm is valid 
+  def form_valid(self, form):
+    username = form.cleaned_data["username"]
+    password = form.cleaned_data["password1"]
+    email = form.cleaned_data["email"]
+
+    user = User.objects.create_user(username, email, password)
+    user.save()
+
+    # log in user 
+    user = authenticate(username=username, password=password)
+    login(self.request, user)
+
+    return HttpResponseRedirect("/")
+
+
 # The view that controls the main database page 
 class MapView(TemplateView):
-
-    def get_context_data(self, **kwargs):
-      context = super(MapView, self).get_context_data(**kwargs)
-      return context
-
-    def render_to_response(self, context, **kwargs):
-      template_name = 'tree/map.html'
-      template = loader.get_template(template_name)
-      response = HttpResponse(template.render(context))
-      return response
+  template_name = 'tree/map.html'
 
 # Returns the GeoJSON for database entires, with featureType differentiating between trees 
 # and stones 
@@ -129,13 +145,13 @@ def get_features(request):
       attributes['geojson'] = stone.geojson
 
       # Translate BCE/BC to negatives and AD/CE to positives for use by Mapbox's filters
-      if stone.start_date != "": 
+      if stone.start_date: 
         start_date = helper.numericDate(stone.start_date)
-        if start_date is not None: 
+        if start_date: 
           attributes['start_date'] = start_date
-      if stone.end_date != "": 
+      if stone.end_date: 
         end_date = helper.numericDate(stone.end_date)
-        if end_date is not None: 
+        if end_date: 
           attributes['end_date'] = end_date
       data[stone.name] = attributes
 
@@ -149,10 +165,7 @@ def result_info(request):
   
   # Filter is used rather than get in order to allow use of the values() function 
   data = {}
-  if itemType == 'trees':
-    result = Trees.objects.filter(common_name=itemName)
-  elif itemType == 'stones':
-    result = Stones.objects.filter(name=itemName)
+  result = Trees.objects.filter(common_name=itemName) if itemType == "trees" else Stones.objects.filter(name=itemName)
   attributes = list(result.values())[0]
   data['pk'] = result[0].pk
 
@@ -168,10 +181,8 @@ def result_info(request):
   data['image_urls'] = image_urls
 
   # Clear values that we don't need
-  if 'geojson' in attributes: 
-    del attributes['geojson']
-  if 'id' in attributes: 
-    del attributes['id']
+  del attributes['geojson']
+  del attributes['id']
 
   # Is there a user logged in? 
   data['user'] = True if request.user.is_authenticated() else False
@@ -218,6 +229,7 @@ class StoneForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
   image = forms.ImageField(required=False)
+
   class Meta: 
     model = Stones 
     fields = ['name', 'alternate_name', 'age', 'appearance', 'poisson_ratio_low', 'poisson_ratio_high',

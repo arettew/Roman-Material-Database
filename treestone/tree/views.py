@@ -211,13 +211,13 @@ def get_geojson_file(request, **kwargs):
 class TreeForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
-  image = forms.ImageField(required=False)
+  #image = forms.ImageField(required=False)
   class Meta: 
     model = Trees
     fields = ['common_name', 'sci_name', 'distribution', 'rot_resistance', 'workability', 
             'common_uses', 'notes', 'tree_height_low', 'tree_height_high', 'tree_rad_low', 'tree_rad_high', 'density',
             'janka_hardness', 'rupture_modulus', 'crushing_strength', 'shrink_rad', 'shrink_tan', 
-            'shrink_volumetric', 'geojson_file', 'image', 'citation']
+            'shrink_volumetric', 'geojson_file', 'citation']
   
   # Makes sure that the geojson uploaded is valid 
   def clean_geojson_file(self):
@@ -228,7 +228,7 @@ class TreeForm(forms.ModelForm):
 class StoneForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
-  image = forms.ImageField(required=False)
+  #image = forms.ImageField(required=False)
 
   class Meta: 
     model = Stones 
@@ -236,7 +236,7 @@ class StoneForm(forms.ModelForm):
             'absorption', 'quarry_location', 'notes', 'dates_of_use', 'start_date', 'end_date', 'dates_notes', 
             'density_low', 'density_high', 'elastic_modulus_average', 'elastic_modulus_low', 'elastic_modulus_high',
             'rupture_modulus_average', 'rupture_modulus_low', 'rupture_modulus_high', 'compressive_strength_average', 
-            'compressive_strength_high', 'compressive_strength_high', 'geojson_file', 'image', 'citation']
+            'compressive_strength_high', 'compressive_strength_high', 'geojson_file', 'citation']
   
   # Makes sure that the geojson uploaded is valid 
   def clean_geojson_file(self):

@@ -77,10 +77,25 @@ WSGI_APPLICATION = 'treestone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 import dj_database_url
+#DATABASES = {
+    #'default': dj_database_url.config(
+    #    default=os.environ['DATABASE_URL']
+    #)
+#}
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ['DATABASE_URL']
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'treestone',
+        'USER': 'treestone',
+        'PASSWORD': 'Rn*2011062',
+        'HOST': 'localhost',
+        #'OPTIONS': {
+            #'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            #'charset': 'UTF8',
+        #},
+        'PORT': '',
+    }
 }
 
 # Password validation
@@ -124,9 +139,6 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -153,4 +165,9 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
 LOGIN_REDIRECT_URL = '/'
+
+try: 
+    from local_settings import *
+except ImportError: 
+    pass
 

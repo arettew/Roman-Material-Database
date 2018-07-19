@@ -50,4 +50,4 @@ urlpatterns = [
     url(r'^stones/approve/(?P<pk>\d+)/$', StoneEditApproveView.as_view(), name='stone-edit-approve'),
     url(r'^approve-geojson', views.approve_geojson, name='get-edit-geojson'),
     url(r'^(?P<type>\w+)/approve/reject/(?P<pk>\d+)/$', RejectView.as_view(), name='tree-reject')
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

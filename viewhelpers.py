@@ -145,7 +145,7 @@ def createContext(context, materialType):
   except: 
     pass
 
-  image_url = edit.image.url if edit.image else ""
+  # image_url = edit.image.url if edit.image else ""
 
   context.update({
     'object': object_dict,
@@ -153,8 +153,8 @@ def createContext(context, materialType):
     'attributes': attributes,
     'citation': citation,
     'type': materialType,
-    'edit_pk': edit.pk,
-    'image_url': image_url
+    #'image_url': image_url,
+    'edit_pk': edit.pk
   })
   return context
 
@@ -180,11 +180,11 @@ def processDecision(request, pk, materialType):
         setattr(mainObject, field, getattr(edit, field))
     
     # Save the image, if there is one 
-    if edit.image:
-      newImage = StoneImages() if materialType == "stones" else TreeImages()
-      newImage.img = edit.image
-      newImage.main_object = mainObject
-      newImage.save()
+    #if edit.image:
+      #newImage = StoneImages() if materialType == "stones" else TreeImages()
+      #newImage.img = edit.image
+      #newImage.main_object = mainObject
+      #newImage.save()
 
     mainObject.save()
     deleteEditObject(materialType, pk)

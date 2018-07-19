@@ -80,21 +80,6 @@ DATABASES = {
     )
 }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'treestone',
-        'USER': 'treestone',
-        'PASSWORD': 'Rn*2011062',
-        'HOST': 'localhost',
-        #'OPTIONS': {
-            #'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            #'charset': 'UTF8',
-        #},
-        'PORT': '',
-    }
-}
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

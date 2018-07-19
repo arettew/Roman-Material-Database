@@ -19,9 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 's4*n6-(h5l1pa@ohf0uuh+_hnd-3l!opjm8=5+^blx*x*s(me3'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -77,25 +74,10 @@ WSGI_APPLICATION = 'treestone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 import dj_database_url
-#DATABASES = {
-    #'default': dj_database_url.config(
-    #    default=os.environ['DATABASE_URL']
-    #)
-#}
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'treestone',
-        'USER': 'treestone',
-        'PASSWORD': 'Rn*2011062',
-        'HOST': 'localhost',
-        #'OPTIONS': {
-            #'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            #'charset': 'UTF8',
-        #},
-        'PORT': '',
-    }
+    'default': dj_database_url.config(
+        default=os.environ['DATABASE_URL']
+    )
 }
 
 # Password validation

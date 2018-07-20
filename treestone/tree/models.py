@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 
 class Bibliography(models.Model):
     bibliography_id = models.AutoField(primary_key=True)
-    bib_no = models.IntegerField(blank=True, null=True)
+    bib_no = models.IntegerField(blank=True, null=True, unique=True)
     full_citation = models.TextField(blank=True, null=True)
     page_range = models.CharField(max_length=50, blank=True)
     notes = models.TextField(blank=True, null=True)

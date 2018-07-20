@@ -26,9 +26,10 @@ python manage.py import_modelname path/to/mydata.csv
 """
 
 # These imports are Python modules that are used to carry out the import
-import csv
+import csv, re
 
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 
 # EDIT ME: with an import of myapp.models and model name
 # where your model name goes, camel-cased precisely as it is in myapp/models.py
@@ -62,23 +63,22 @@ def map_csv(csvfile, headers=True):
     reader = csv.DictReader(csvfile)
 
     for row in reader:
-        # - EDIT ME
-        # where 'last_name' and 'first_name' are column headings in your CSV
         stone = Stones()
-        print(row)
         stone.name = row['name']
         stone.alternate_name = row['alternate_name']
         stone.petrographic_details = row['petrographic_details']
         stone.age = row['age']
         stone.appearance = row['appearance']
-        stone.poisson_ratio = row['poisson_ratio']
+        stone.poisson_ratio_low = row['poisson_ratio_low']
+        stone.poisson_ratio_high = row['poisson_ratio_high']
         stone.absorption = row['absorption']
         stone.quarry_location = row['quarry_location']
         stone.archaeological_sources = row['archaeological_sources']
         stone.primary_sources = row['primary_sources']
         stone.secondary_sources = row['secondary_sources']
-        stone.shapefile = row['shapefile']
         stone.notes = row['notes']
+        stone.beginning_date = row['beginning_date']
+        stone.ending_date = row['ending_date']
         stone.dates_of_use = row['dates_of_use']
         stone.density_avg = row['density_avg']
         stone.density_low = row['density_low']
@@ -86,7 +86,6 @@ def map_csv(csvfile, headers=True):
         stone.elastic_modulus_average = row['elastic_modulus_average']
         stone.elastic_modulus_low = row['elastic_modulus_low']
         stone.elastic_modulus_high = row['elastic_modulus_high']
-        stone.image = row['image']
         stone.rupture_modulus_average = row['rupture_modulus_average']
         stone.rupture_modulus_low = row['rupture_modulus_low']
         stone.rupture_modulus_high = row['rupture_modulus_high']
@@ -94,7 +93,18 @@ def map_csv(csvfile, headers=True):
         stone.compressive_strength_low = row['compressive_strength_low']
         stone.compressive_strength_high = row['compressive_strength_high']
 
-        stone.save()
+        # Must delete empty strings from the float fields 
+        for field in Stones._meta.get_fields(): 
+            if not hasattr(stone, field.name): 
+                continue
+            if not getattr(stone, field.name): 
+                setattr(stone, field.name, None)
+
+        try: 
+            stone.save()
+        except IntegrityError: 
+            # A duplicate was probably found
+            pass
 
         cite_names = []
         # iterate through the items and if they
@@ -107,19 +117,28 @@ def map_csv(csvfile, headers=True):
             # if the row has an actual value and isn't empty
             if row[cite_name]:
                 # split the citation numbers
-                cite_numbers = row[cite_name].split(';')
+                row[cite_name] = re.sub(" *", "", row[cite_name])
+                if ';' in row[cite_name]:
+                    cite_numbers = row[cite_name].split(';')
+                elif ',' in row[cite_name]:
+                    cite_numbers = row[cite_name].split(',')
+                else:
+                    cite_numbers = []
                 # for each number in the numbers
                 # grab the bibliograpy and create a CitationTree obj.
                 for number in cite_numbers:
                     if number.strip():
-                        biblio = Bibliography.objects.get(bib_no=number)
-                        # split by _ , omit _cite and rejoin
-                        orig_name = '_'.join(cite_name.split('_')[:-1])
-                        CitationStone.objects.create(
-                            bibliography=biblio,
-                            stone=stone,
-                            stone_attribute=orig_name
-                            )
+                        try: 
+                            biblio = Bibliography.objects.get(bib_no=number)
+                            # split by _ , omit _cite and rejoin
+                            orig_name = '_'.join(cite_name.split('_')[:-1])
+                            CitationStone.objects.create(
+                                bibliography=biblio,
+                                stone=stone,
+                                stone_attribute=orig_name
+                                )
+                        except: 
+                            pass
 
 class Command(BaseCommand):
 

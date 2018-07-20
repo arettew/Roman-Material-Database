@@ -29,12 +29,15 @@ python manage.py import_modelname path/to/mydata.csv
 import csv
 
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
+
 
 # EDIT ME: with an import of myapp.models and model name
 # where your model name goes, camel-cased precisely as it is in myapp/models.py
 # so if your app was plinyletters and the model was Letter,
 # the import would be: from plinyletters.models import Letter
 from treestone.tree.models import Trees, Bibliography, CitationTree
+
 
 # EDIT ME: Foreign Key relationship from MyModel example
 # If you are not dealing with a Foreign Key relationship in the model, then
@@ -84,14 +87,16 @@ def map_csv(csvfile, headers=True):
         tree.common_uses = row['common_uses']
         tree.primary_sources = row['primary_sources']
         tree.archaeological_sources = row['archaeological_sources']
-        tree.shapefile = row['shapefile']
         tree.secondary_sources = row['secondary_sources']
         tree.notes = row['notes']
         tree.tree_height_low = row['tree_height_low']
         tree.tree_height_high = row['tree_height_high']
-        tree.image = row['image']
 
-        tree.save()
+        try: 
+            tree.save()
+        except IntegrityError: 
+            # A duplicate has likely been found
+            pass
 
         cite_names = []
         # iterate through the items and if they
@@ -108,14 +113,17 @@ def map_csv(csvfile, headers=True):
                 # for each number in the numbers
                 # grab the bibliograpy and create a CitationTree obj.
                 for number in cite_numbers:
-                    biblio = Bibliography.objects.get(bib_no=number)
-                    # split by _ , omit _cite and rejoin
-                    orig_name = '_'.join(cite_name.split('_')[:-1])
-                    CitationTree.objects.create(
-                        bibliography=biblio,
-                        tree=tree,
-                        tree_attribute=orig_name
-                    )
+                    try: 
+                        biblio = Bibliography.objects.get(bib_no=number)
+                        # split by _ , omit _cite and rejoin
+                        orig_name = '_'.join(cite_name.split('_')[:-1])
+                        CitationTree.objects.create(
+                            bibliography=biblio,
+                            tree=tree,
+                            tree_attribute=orig_name
+                        )
+                    except: 
+                        pass
 
 
 class Command(BaseCommand):

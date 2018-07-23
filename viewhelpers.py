@@ -98,23 +98,29 @@ def validateGeojson(self, geojsonFile):
 # -----------------------------------------------------------------------
 
 # Create a TreeEdit or StoneEdit object from form data 
-def createEdit(material_type, main_object, data, user):
-  if not (material_type == 'trees' or material_type == 'stones'):
+def createEdit(materialType, mainObject, data, user):
+  if not (materialType == 'trees' or materialType == 'stones'):
     return 
-  edit = TreeEdits() if material_type == "trees" else StoneEdits()
+  edit = TreeEdits() if materialType == "trees" else StoneEdits()
 
   attrChanged = False
   for attr in data: 
-    if hasattr(edit, attr) and not hasattr(main_object, attr): 
+    if hasattr(edit, attr) and not hasattr(mainObject, attr): 
       setattr(edit, attr, data[attr])
-      attrChanged = True
-    elif hasattr(main_object, attr) and hasattr(edit, attr):
-      if getattr(main_object, attr) != data[attr]:
-        setattr(edit, attr, data[attr])
+    elif hasattr(mainObject, attr) and hasattr(edit, attr):
+      mainAttr = getattr(mainObject, attr)
+      editAttr = data[attr]
+
+      if isinstance(mainAttr, basestring): 
+        mainAttr = mainAttr.strip()
+        editAttr = editAttr.strip()
+
+      if not mainAttr == editAttr:
+        setattr(edit, attr, editAttr)
         attrChanged = True
   
   if attrChanged: 
-    edit.main_object = main_object
+    edit.main_object = mainObject
     edit.user = user
     edit.save()
   
@@ -215,7 +221,7 @@ def sendRejection(edit, data):
   send_mail(
     'Roman Materials Database Edit Decision',
     message,
-    # EMAIL THAT MATCHES THE EMAIL IN SETTINGS HERE,
+    'heritagestructureslab@gmail.com',
     [email],
     fail_silently=True,
   )

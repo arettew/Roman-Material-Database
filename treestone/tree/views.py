@@ -171,13 +171,12 @@ def result_info(request):
 
   # Get associated image urls if they exist 
   image_urls = []
-  if itemType == 'trees':
-    images = TreeImages.objects.filter(main_object__common_name=itemName)
-  elif itemType == 'stones':
-    images = StoneImages.objects.filter(main_object__name=itemName)
-  for image in images: 
-    image_urls.append(image.img.url)
-  image_urls.append('../static/images/trees/AT2.jpg')
+  #if itemType == 'trees':
+  #  images = TreeImages.objects.filter(main_object__common_name=itemName)
+  #elif itemType == 'stones':
+  #  images = StoneImages.objects.filter(main_object__name=itemName)
+  #for image in images: 
+  #  image_urls.append(image.img.url)
 
   data['image_urls'] = image_urls
 

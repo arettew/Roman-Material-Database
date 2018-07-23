@@ -177,6 +177,7 @@ def result_info(request):
     images = StoneImages.objects.filter(main_object__name=itemName)
   for image in images: 
     image_urls.append(image.img.url)
+  image_urls.append('../static/images/trees/AT2.jpg')
 
   data['image_urls'] = image_urls
 

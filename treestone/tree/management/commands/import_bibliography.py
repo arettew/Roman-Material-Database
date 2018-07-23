@@ -65,7 +65,6 @@ def map_csv(csvfile, headers=True):
         # - EDIT ME
         # where 'last_name' and 'first_name' are column headings in your CSV
         bibliography = Bibliography()
-        print(row)
         bibliography.bib_no = row['bib_no']
         bibliography.full_citation = row['full_citation']
         bibliography.notes = row['notes']

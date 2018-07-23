@@ -79,7 +79,7 @@ import geojson
 def validateGeojson(self, geojsonFile): 
   if geojsonFile is None: 
     return 
-  if not geojsonFile.name.endswith('.geojson'):
+  if not geojsonFile.name.endswith('.geojson') and not geojsonFile.name.endswith('.json'):
     self.add_error('geojson_file', "Illegal file type")
     return 
   

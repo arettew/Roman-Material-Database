@@ -133,12 +133,12 @@ def get_features(request):
 
   if featureType == "trees":
     for tree in Trees.objects.all(): 
-      if tree.geojson == "": 
+      if tree.geojson == "" or tree.geojson == None: 
         continue
       data[tree.common_name] = {'geojson': tree.geojson}
   elif featureType == "stones":
     for stone in Stones.objects.all(): 
-      if stone.geojson == "": 
+      if stone.geojson == "" or stone.geojson == None: 
         continue
 
       attributes = {}

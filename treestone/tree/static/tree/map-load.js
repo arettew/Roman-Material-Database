@@ -28,6 +28,7 @@ function addFeatureData(map, data, featureType) {
     //  Consolidates features for each entry into one FeatureCollection for the layer
     var allFeatures = [];
     for (feature in data) {
+        console.log(data);
         var featureGeojson = JSON.parse(data[feature]['geojson']);
         if (featureGeojson["type"] == "FeatureCollection") {
             //  FeatureCollections cannot be members of a FeatureCollection

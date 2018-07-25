@@ -151,8 +151,5 @@ EMAIL_PORT = 587
 
 LOGIN_REDIRECT_URL = '/'
 
-try: 
-    from local_settings import *
-except ImportError: 
-    pass
+from local_settings import *
 

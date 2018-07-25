@@ -6,6 +6,10 @@ from treestone.tree.models import TreeEdits
 from treestone.tree.models import StoneEdits
 
 from django.core.mail import send_mail 
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
+from string import ascii_lowercase
+import os
 
 # -----------------------------------------------------------------------
 # General purpose helper functions
@@ -48,6 +52,28 @@ def numericDate(strDate):
 # -----------------------------------------------------------------------
 # Helpers for result-info
 # -----------------------------------------------------------------------
+
+# Get image urls from the item pk and item type ("stones" or "trees")
+def getImages(pk, itemType): 
+  imageUrls = []
+  pathFromCwd = "treestone/tree/static/images" + itemType + "/"
+  pathFromStatic = "images/" + itemType + "/"
+
+  try: 
+    imageUrls.append(static(pathFromStatic + "AT" + str(pk) + ".jpg"))
+  except: 
+    pass
+
+  letters = ascii_lowercase[1:]
+  for letter in letters: 
+    try: 
+      url = path + "AT" + str(pk) + letter + ".jpg"
+      open(url)
+      imageUrls.append(url)
+    except: 
+      break
+  
+  return imageUrls
 
 # Add units of measurement to attributes where appropriate 
 def addUnitsOfMeasurement(attributes): 

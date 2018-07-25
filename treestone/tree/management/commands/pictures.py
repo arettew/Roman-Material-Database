@@ -20,12 +20,13 @@ def mapRowToTrait(csvFile, column):
 # Renames the pictures 
 def renamePictures(itemsToRows, materialType):
     for name in itemsToRows.keys(): 
-        try:
+        try: 
             if materialType == "stones": 
-                material = Stones.objects.get(name=name)
+                material = Stones.objects.get(name=name.strip())
             else:
-                material = Trees.objects.get(common_name=name)
+                material = Trees.objects.get(common_name=name.strip())
         except: 
+            print(name + " not found")
             continue
 
         oldPath = "treestone/tree/static/images/" + materialType
@@ -35,8 +36,9 @@ def renamePictures(itemsToRows, materialType):
         newName = newPath + "/AT" + str(material.pk) + ".jpg"
         try:
             os.rename(oldName, newName)
-        except: 
-            print("Error converting " + str(itemsToRows[name]))
+            print("Success: " + name + " " + str(itemsToRows[name]) + " " + str(material.pk))
+        except OSError: 
+            print("Error: " + name + " " + str(itemsToRows[name]) + " " + str(material.pk))
 
         # Try renaming subsequent pictures, if they exist
         # Exclude 'a'
@@ -53,9 +55,9 @@ def renamePictures(itemsToRows, materialType):
 class Command(BaseCommand):
     # Renames pictures so that their number matches the pk of the object in the database
     def handle(self, *args, **options):
-        #treeCsvFile = open("treestone/tree/static/csvs/trees.csv", "r")
-        #itemsToRows = mapRowToTrait(treeCsvFile, 'common_name')
-        #renamePictures(itemsToRows, "trees")
+        treeCsvFile = open("treestone/tree/static/csvs/trees.csv", "r")
+        itemsToRows = mapRowToTrait(treeCsvFile, 'common_name')
+        renamePictures(itemsToRows, "trees")
 
         stoneCsvFile = open("treestone/tree/static/csvs/pietra.csv", "r")
         itemsToRows = mapRowToTrait(stoneCsvFile, "name")

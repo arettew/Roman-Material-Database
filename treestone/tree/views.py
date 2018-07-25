@@ -167,18 +167,12 @@ def result_info(request):
   data = {}
   result = Trees.objects.filter(common_name=itemName) if itemType == "trees" else Stones.objects.filter(name=itemName)
   attributes = list(result.values())[0]
-  data['pk'] = result[0].pk
+  pk = result[0].pk
+  data['pk'] = pk
 
   # Get associated image urls if they exist 
-  image_urls = []
-  #if itemType == 'trees':
-  #  images = TreeImages.objects.filter(main_object__common_name=itemName)
-  #elif itemType == 'stones':
-  #  images = StoneImages.objects.filter(main_object__name=itemName)
-  #for image in images: 
-  #  image_urls.append(image.img.url)
-
-  data['image_urls'] = image_urls
+  imageUrls = helper.getImages(pk, itemType)
+  data['image_urls'] = imageUrls
 
   # Clear values that we don't need
   del attributes['geojson']

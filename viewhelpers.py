@@ -152,6 +152,21 @@ def createEdit(materialType, mainObject, data, user):
   
   return
 
+# Create a TreeEdit or StoneEdit object which is entirely new
+def createNewObjectEdit(materialType, data, user):
+  if not (materialType == 'trees' or materialType == 'stones'):
+    return 
+  edit = TreeEdits() if materialType == "trees" else StoneEdits()
+
+  for attr in data: 
+    if hasattr(edit, attr):
+      setattr(edit, attr, data[attr])
+  
+  edit.user = user 
+  edit.save() 
+
+  return
+
 # -----------------------------------------------------------------------
 # Helpers for TreeEditApproveView/StoneEditApproveView
 # -----------------------------------------------------------------------
@@ -160,14 +175,15 @@ from django.forms.models import model_to_dict
 # Create the context for the edit approval views 
 def createContext(context, materialType): 
   edit = context['edit_object']
-  object_dict = model_to_dict(edit.main_object)
+  objectType = Trees() if materialType == "trees" else Stones()
+  object_dict = model_to_dict(edit.main_object) if edit.main_object else None
   edit_object_dict = model_to_dict(edit)
   citation = edit_object_dict['citation']
 
   # List that will be used to display attributes 
   attributes = sorted(edit_object_dict.keys())
   for attr in attributes: 
-    if not hasattr(edit.main_object, attr): 
+    if not hasattr(objectType, attr): 
       attributes.remove(attr)
 
   attributes.remove('id')
@@ -199,7 +215,8 @@ def processDecision(request, pk, materialType):
     url = '/' + materialType + '/approve/reject/' + pk + '/'
   elif request.POST['decision'] == 'approve':
     edit = StoneEdits.objects.get(pk=pk) if materialType == 'stones' else TreeEdits.objects.get(pk=pk)
-    mainObject = edit.main_object
+    objectType = Trees() if materialType == "trees" else Stones()
+    mainObject = edit.main_object if edit.main_object else objectType
 
     # Save edit values over into the main database entry 
     fieldObjects = StoneEdits._meta.get_fields() if materialType == 'stones' else TreeEdits._meta.get_fields()

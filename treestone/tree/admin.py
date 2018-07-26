@@ -29,9 +29,21 @@ class StonesAdmin(ImportExportModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 class TreeEditsAdmin(ImportExportModelAdmin):
-    list_display=('main_object',)
+    list_display=('get_name',)
+
+    def get_name(self, obj): 
+        if obj.main_object: 
+            return obj.main_object.common_name
+        else:
+            return obj.common_name
 class StoneEditsAdmin(ImportExportModelAdmin):
-    list_display=('main_object',)
+    list_display=('get_name',)
+
+    def get_name(self, obj): 
+        if obj.main_object: 
+            return obj.main_object.name
+        else:
+            return obj.name
 
 
 admin.site.register(Trees, TreesAdmin)

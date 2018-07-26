@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 
 from treestone.tree.views import StonesListView
 from treestone.tree.views import MapView, HomeView, RegisterView
-from treestone.tree.views import TreeUpdate, StoneUpdate
+from treestone.tree.views import TreeUpdateView, StoneUpdateView, TreeCreateView, StoneCreateView
 from treestone.tree.views import EditListView, TreeEditApproveView, StoneEditApproveView
 from treestone.tree.views import RejectView
 from treestone.tree import views
@@ -43,8 +43,10 @@ urlpatterns = [
     url(r'^get_features', views.get_features, name='get_features'),
     url(r'^result_info', views.result_info, name='result_info'),
     url(r'^geojson/(?P<type>\w+)/(?P<pk>\d+)/$', views.get_geojson_file, name='get-geojson-file'),
-    url(r'^trees/edit/(?P<pk>\d+)/$', TreeUpdate.as_view(), name='tree-update'),
-    url(r'^stones/edit/(?P<pk>\d+)/$', StoneUpdate.as_view(), name='stone-update'),
+    url(r'^trees/create/$', TreeCreateView.as_view(), name='tree-create'),
+    url(r'^stones/create/$', StoneCreateView.as_view(), name='stone-create'),
+    url(r'^trees/edit/(?P<pk>\d+)/$', TreeUpdateView.as_view(), name='tree-update'),
+    url(r'^stones/edit/(?P<pk>\d+)/$', StoneUpdateView.as_view(), name='stone-update'),
     url(r'^edits-list/$', EditListView.as_view(), name='edits-list'),
     url(r'^trees/approve/(?P<pk>\d+)/$', TreeEditApproveView.as_view(), name='tree-edit-approve'),
     url(r'^stones/approve/(?P<pk>\d+)/$', StoneEditApproveView.as_view(), name='stone-edit-approve'),

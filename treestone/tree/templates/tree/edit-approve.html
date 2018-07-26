@@ -21,11 +21,15 @@
 
     <div id="container">
         <div class="overlay" id="object-container">
-            <h3>Original Object</h3>
-            {% for attr in attributes %}
-                <strong>{{ attr }}</strong><br> 
-                <p>{{ object|get_item:attr}}</p><br>
-            {% endfor %}
+            {% if object %}
+                <h3>Original Object</h3>
+                {% for attr in attributes %}
+                    <strong>{{ attr }}</strong><br> 
+                    <p>{{ object|get_item:attr}}</p><br>
+                {% endfor %}
+            {% else %}
+                <h3>This is a new object</h3> 
+            {% endif %}
         </div>
         <div class="overlay" id="edit-container">
             <h3>Proposed Edits</h3>

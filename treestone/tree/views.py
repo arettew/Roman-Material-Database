@@ -8,7 +8,7 @@ from django.template import loader
 
 #django generic class view 
 from django.views.generic import ListView, DetailView, TemplateView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView, UpdateView, CreateView
 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -206,6 +206,11 @@ class TreeForm(forms.ModelForm):
   citation = forms.FileField(required=False)
   geojson_file = forms.FileField(required=False)
   #image = forms.ImageField(required=False)
+
+  def __init__(self, *args, **kwargs):
+    super(TreeForm, self).__init__(*args, **kwargs)
+    self.fields['common_name'].required = True
+
   class Meta: 
     model = Trees
     fields = ['common_name', 'sci_name', 'distribution', 'rot_resistance', 'workability', 
@@ -224,6 +229,10 @@ class StoneForm(forms.ModelForm):
   geojson_file = forms.FileField(required=False)
   #image = forms.ImageField(required=False)
 
+  def __init__(self, *args, **kwargs):
+    super(StoneForm, self).__init__(*args, **kwargs)
+    self.fields['name'].required = True
+
   class Meta: 
     model = Stones 
     fields = ['name', 'alternate_name', 'age', 'appearance', 'poisson_ratio_low', 'poisson_ratio_high',
@@ -237,21 +246,38 @@ class StoneForm(forms.ModelForm):
     geojsonFile = self.cleaned_data["geojson_file"]
     helper.validateGeojson(self, geojsonFile)
 
+class TreeCreateView(LoginRequiredMixin, CreateView):
+  model = Trees
+  form_class = TreeForm 
+  template_name = 'tree/update-form.html'
+
+  def form_valid(self, form):
+    helper.createNewObjectEdit('trees', form.cleaned_data, self.request.user)
+    return HttpResponseRedirect('/')
+
+class StoneCreateView(LoginRequiredMixin, CreateView):
+  model = Stones
+  form_class = StoneForm 
+  template_name = 'tree/update-form.html'
+
+  def form_valid(self, form):
+    helper.createNewObjectEdit('stones', form.cleaned_data, self.request.user)
+    return HttpResponseRedirect('/')
+
 # The view which is used to submit updates to tree objects 
-class TreeUpdate(LoginRequiredMixin, UpdateView):
+class TreeUpdateView(LoginRequiredMixin, UpdateView):
   model = Trees
   # Any changes to fields will need to include a corresponding attribute in the TreeEdits model
   form_class = TreeForm
   template_name = 'tree/update-form.html'
 
   def form_valid(self, form):
-    edit = TreeEdits()
     tree = Trees.objects.get(pk=self.object.pk)
     helper.createEdit('trees', tree, form.cleaned_data, self.request.user)
     return HttpResponseRedirect(self.get_success_url())
 
 # The view which is used to submit updates to stone objects
-class StoneUpdate(LoginRequiredMixin, UpdateView):
+class StoneUpdateView(LoginRequiredMixin, UpdateView):
   model = Stones 
   form_class = StoneForm
   template_name = 'tree/update-form.html'
@@ -322,7 +348,7 @@ def approve_geojson(request):
 
   data = {}
   data['editGeojson'] = edit.geojson
-  data['mainObjectGeosjon'] = edit.main_object.geojson
+  data['mainObjectGeosjon'] = edit.main_object.geojson if edit.main_object else ""
 
   return JsonResponse(data)
 

@@ -149,8 +149,8 @@ class TestEdits(TestCase):
         self.client.login(username="user", password="password")
         tree = Trees.objects.get(common_name="fake_tree")
         response = self.client.post(
-            reverse("tree-update", kwargs={"pk": tree.pk}),
-            {"main_object": tree, "sci_name": "sci_name"})
+            "/trees/edit/" + str(tree.pk) + "/",
+            {"main_object": tree, "common_name":"fake_tree", "sci_name": "sci_name"})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(TreeEdits.objects.filter(sci_name="sci_name").exists())
 
@@ -159,7 +159,7 @@ class TestEdits(TestCase):
         stone = Stones.objects.get(name="fake_stone")
         response = self.client.post(
             reverse("stone-update", kwargs={"pk": stone.pk}),
-            {"main_object": stone, "alternate_name": "alt_name"})
+            {"main_object": stone, "name": "fake_stone", "alternate_name": "alt_name"})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(StoneEdits.objects.filter(alternate_name="alt_name").exists())
     
@@ -171,10 +171,42 @@ class TestEdits(TestCase):
 
         response = self.client.post(
             reverse("tree-update", kwargs={"pk": tree.pk}),
-            {"main_object": tree, "sci_name": "sci_name", "geojson_file": geojsonFile})
+            {"main_object": tree, "common_name": "fake_tree", "sci_name": "sci_name", "geojson_file": geojsonFile})
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue(TreeEdits.objects.filter(sci_name="sci_name").exists())
+
+    def test_edit_creation_new_stone(self): 
+        self.client.login(username="user", password="password")
+        response = self.client.post(
+            '/stones/create/',
+            {"name": "new_stone"})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(StoneEdits.objects.filter(name="new_stone").exists())
+    
+    def test_edit_creation_new_tree(self): 
+        self.client.login(username="user", password="password")
+        response = self.client.post(
+            '/trees/create/',
+            {"common_name": "new_tree"})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(TreeEdits.objects.filter(common_name="new_tree").exists())
+
+    def test_edit_creation_new_stone_same_name(self): 
+        self.client.login(username="user", password="password")
+        response = self.client.post(
+            '/stones/create/',
+            {"name": "fake_stone"})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(StoneEdits.objects.filter(name="fake_stone").exists())
+    
+    def test_edit_creation_new_tree_same_common_name(self): 
+        self.client.login(username="user", password="password")
+        response = self.client.post(
+            '/trees/create/',
+            {"common_name": "fake_tree"})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TreeEdits.objects.filter(common_name="fake_tree").exists())
 
     def test_edit_creation_stone_good_geojson(self):
         self.client.login(username="user", password="password")
@@ -184,7 +216,7 @@ class TestEdits(TestCase):
 
         response = self.client.post(
             reverse("stone-update", kwargs={"pk": stone.pk}),
-            {"main_object": stone, "alternate_name": "alt_name", "geojson_file": geojsonFile})
+            {"main_object": stone, "name": "fake_stone", "alternate_name": "alt_name", "geojson_file": geojsonFile})
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue(StoneEdits.objects.filter(alternate_name="alt_name").exists())

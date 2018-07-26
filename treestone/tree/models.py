@@ -100,7 +100,7 @@ class Stones(models.Model):
 
 
 class StoneEdits(models.Model):
-    main_object = models.ForeignKey('Stones', models.CASCADE)
+    main_object = models.ForeignKey('Stones', models.CASCADE, blank=True, null=True)
     name = models.TextField(blank=True, null=True)
     alternate_name = models.TextField(blank=True, null=True)
     petrographic_details = models.TextField(blank=True, null=True)
@@ -177,7 +177,7 @@ class Trees(models.Model):
 
 # Class used to store edits before they are approved by an admin
 class TreeEdits(models.Model):
-    main_object = models.ForeignKey('Trees', models.CASCADE, null=True)
+    main_object = models.ForeignKey('Trees', models.CASCADE, null=True, blank=True)
     common_name = models.TextField(blank=True, null=True)
     sci_name = models.TextField(blank=True, null=True)
     distribution = models.TextField(blank=True, null=True)

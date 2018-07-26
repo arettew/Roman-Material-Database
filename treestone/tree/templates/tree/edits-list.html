@@ -11,7 +11,11 @@
             <h3>Edits to trees</h3>
             <ul>
             {% for edit in tree_edits_list %}
-                <li><a href="/trees/approve/{{ edit.pk }}">{{ edit.main_object.common_name }}</a></li>
+                {% if edit.main_object %}
+                    <li><a href="/trees/approve/{{ edit.pk }}">{{ edit.main_object.common_name }}</a></li>
+                {% else %}
+                    <li><a href="/trees/approve/{{ edit.pk }}">{{ edit.common_name }}</a></li>
+                {% endif %}
             {% empty %}
                 <li>No edits for this object</li>
             {% endfor %}

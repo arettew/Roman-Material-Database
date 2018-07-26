@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from string import ascii_lowercase
-import os
+import os, re
 
 # -----------------------------------------------------------------------
 # General purpose helper functions
@@ -83,18 +83,40 @@ def addUnitsOfMeasurement(attributes):
 
     units = ""
     if "density" in attr: 
-      units = " kg/m^3"
+      units = " kg/m<sup>3</sup>"
     elif "elastic" in attr: 
-      units = " kg/cm^2"
+      units = " kg/cm<sup>2</sup>"
     elif "strength" in attr or "rupture" in attr: 
       units = " MPa"
-    elif "absorption" in attr: 
+    elif "absorption" in attr or "shrink" in attr: 
       units = "%"
+    elif "rad" in attr: 
+      units = "m"
+    elif "janka" in attr: 
+      units = "N"
 
     if units != "":
       val = str(attributes[attr])
       val += units
       attributes[attr] = val
+
+# Clean up the attribute names for display
+def prettify(attributes): 
+  for attr in attributes: 
+    newAttr = re.sub("_", " ", attr)
+
+    newAttr = re.sub("tree rad", "trunk radius", newAttr)
+    if not "shrinkage" in newAttr:
+      newAttr = re.sub("shrink", "shrinkage", newAttr)
+    if newAttr == "common name":
+      newAttr = "common name(s)"
+    elif newAttr == "sci name": 
+      newAttr = "scientific name"
+    elif newAttr == "distribution": 
+      newAttr = "geographic distribution"
+
+    attributes[newAttr] = attributes.pop(attr)
+  return
 
 # -----------------------------------------------------------------------
 # Helpers for forms (TreeForm/StoneForm)

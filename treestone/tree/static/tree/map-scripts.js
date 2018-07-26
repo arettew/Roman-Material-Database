@@ -166,7 +166,6 @@ function search(e, supressZoomError) {
     $("#results-box").html(searchResults);
     $("#results-box").show();
     $("li").css('cursor', 'pointer');
-
 }
 
 //  Creates the geometry used to query, either a bbox with the center of the box being the point of the 
@@ -300,10 +299,13 @@ function displayInfo(item) {
             //  Adds close button 
             var info = getCloseHtml();
 
-            //  Adds info to window 
+            //  Adds info to window by crafting info html string
             info += "<h3>" + itemName + "</h3>";
             var attributes = data["attributes"]
-            for (attribute in attributes) {
+            var attributeKeys = Object.keys(attributes)
+            attributeKeys.sort()
+            for (var i = 0; i < attributeKeys.length; i++) {
+                attribute = attributeKeys[i];
                 if (attributes[attribute] == null) {
                     // Prefer an empty string to a null value 
                     attributes[attribute] = "";
@@ -311,12 +313,14 @@ function displayInfo(item) {
                 info += "<b>" + attribute + "</b></br>";
                 info += "<p>" + attributes[attribute] + "</p> ";
             }
+            //  Add links to geojson download and edit
             var downloadLink = "/geojson/" + type + "/" + data["pk"]
             info += "<br><div class='left'><a href='" + downloadLink + "'>Download GeoJSON</a></div>"
             if (data["user"]) {
                 var editLink = "/" + type + "/edit/" + data["pk"] + "/"
                 info += "<div class='right'><a href='" + editLink + "'>Edit</a></div>"
             }
+            //  Display
             $("#info-box").html(info);
             $("#info-box").show();
 

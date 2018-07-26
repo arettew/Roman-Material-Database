@@ -25,7 +25,11 @@
             <h3>Edits to stones</h3>
             <ul>
                 {% for edit in stone_edits_list %}
-                    <li><a href="/stones/approve/{{ edit.pk }}">{{ edit.main_object.name }}</a></li>
+                    {% if edit.main_object %}
+                        <li><a href="/stones/approve/{{ edit.pk }}">{{ edit.main_object.name }}</a></li>
+                    {% else %}
+                    <li><a href="/stones/approve/{{ edit.pk }}">{{ edit.name }}</a></li>
+                    {% endif %}
                 {% empty %}
                     <li>No edits for this object</li>
                 {% endfor %}

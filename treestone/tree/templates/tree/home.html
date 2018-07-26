@@ -28,5 +28,14 @@
                 <a href="/accounts/login/">Login</a> or <a href="/accounts/register/">Register</a>
             </div>
         {% endif %}
+        {% if user.is_authenticated %}
+        <hr>
+            Didn't find something you expected? <br>
+            Add <a href="/stones/create/">stones</a> or <a href="/trees/create">trees</a> to the database!
+        {% endif %}
+        {% if request.user.is_staff %}
+            <hr>
+            Check out new edits <a href="/edits-list/">here</a>!
+        {% endif %}
     </div>
 </html>

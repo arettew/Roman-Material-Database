@@ -24,6 +24,7 @@ from treestone.tree.views import MapView, HomeView, RegisterView
 from treestone.tree.views import TreeUpdateView, StoneUpdateView, TreeCreateView, StoneCreateView
 from treestone.tree.views import EditListView, TreeEditApproveView, StoneEditApproveView
 from treestone.tree.views import RejectView
+from treestone.tree.views import SuccessView
 from treestone.tree import views
 
 
@@ -51,5 +52,6 @@ urlpatterns = [
     url(r'^trees/approve/(?P<pk>\d+)/$', TreeEditApproveView.as_view(), name='tree-edit-approve'),
     url(r'^stones/approve/(?P<pk>\d+)/$', StoneEditApproveView.as_view(), name='stone-edit-approve'),
     url(r'^approve-geojson', views.approve_geojson, name='get-edit-geojson'),
-    url(r'^(?P<type>\w+)/approve/reject/(?P<pk>\d+)/$', RejectView.as_view(), name='tree-reject')
+    url(r'^(?P<type>\w+)/approve/reject/(?P<pk>\d+)/$', RejectView.as_view(), name='tree-reject'),
+    url(r'^success/$', SuccessView.as_view(), name='success')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

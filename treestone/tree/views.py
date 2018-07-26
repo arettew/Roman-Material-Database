@@ -253,7 +253,7 @@ class TreeCreateView(LoginRequiredMixin, CreateView):
 
   def form_valid(self, form):
     helper.createNewObjectEdit('trees', form.cleaned_data, self.request.user)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/success/')
 
 class StoneCreateView(LoginRequiredMixin, CreateView):
   model = Stones
@@ -262,7 +262,7 @@ class StoneCreateView(LoginRequiredMixin, CreateView):
 
   def form_valid(self, form):
     helper.createNewObjectEdit('stones', form.cleaned_data, self.request.user)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/success/')
 
 # The view which is used to submit updates to tree objects 
 class TreeUpdateView(LoginRequiredMixin, UpdateView):
@@ -270,17 +270,19 @@ class TreeUpdateView(LoginRequiredMixin, UpdateView):
   # Any changes to fields will need to include a corresponding attribute in the TreeEdits model
   form_class = TreeForm
   template_name = 'tree/update-form.html'
+  success_url = '/success/'
 
   def form_valid(self, form):
     tree = Trees.objects.get(pk=self.object.pk)
     helper.createEdit('trees', tree, form.cleaned_data, self.request.user)
-    return HttpResponseRedirect(self.get_success_url())
+    return HttpResponseRedirect('self.get_success_url()')
 
 # The view which is used to submit updates to stone objects
 class StoneUpdateView(LoginRequiredMixin, UpdateView):
   model = Stones 
   form_class = StoneForm
   template_name = 'tree/update-form.html'
+  success_url = '/success/'
 
   def form_valid(self, form):
     edit = StoneEdits()
@@ -385,3 +387,5 @@ class RejectView(FormView):
 
     return HttpResponseRedirect('/edits-list/')
 
+class SuccessView(TemplateView):
+  template_name = 'tree/success.html'

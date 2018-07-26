@@ -12,7 +12,7 @@ p {
 
 .map-overlay {
     position: fixed;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     margin-right: 20px;
     overflow: auto;
     border-radius: 3px;
@@ -75,7 +75,7 @@ p {
     margin-left: 20px;
     border-style: solid;
     border-width: 5px;
-    border-color: rgba(255, 0, 0, 0.8);
+    border-color: rgba(255, 0, 0, 0.9);
     display: none; 
 }
 
@@ -159,6 +159,7 @@ p {
 #filter-help-text {
     bottom: 100px; 
     left: 60px; 
+
 }
 
 #search-help {
@@ -178,4 +179,9 @@ p {
     text-align: center; 
     color: #aaaaaa;
     font-weight: bold;
+}
+
+.help-text {
+    z-index: 1;
+    background: rgba(255, 255, 255, 1);
 }

@@ -56,10 +56,11 @@ def numericDate(strDate):
 # Get image urls from the item pk and item type ("stones" or "trees")
 def getImages(pk, itemType): 
   imageUrls = []
-  pathFromCwd = "treestone/tree/static/images" + itemType + "/"
+  pathFromCwd = "treestone/tree/static/images/" + itemType + "/"
   pathFromStatic = "images/" + itemType + "/"
 
   try: 
+    open(pathFromCwd + "AT" + str(pk) + ".jpg")
     imageUrls.append(static(pathFromStatic + "AT" + str(pk) + ".jpg"))
   except: 
     pass
@@ -67,9 +68,8 @@ def getImages(pk, itemType):
   letters = ascii_lowercase[1:]
   for letter in letters: 
     try: 
-      url = path + "AT" + str(pk) + letter + ".jpg"
-      open(url)
-      imageUrls.append(url)
+      open(pathFromCwd + "AT" + str(pk) + letter + ".jpg")
+      imageUrls.append(static(pathFromStatic + "AT" + str(pk) + letter + ".jpg"))
     except: 
       break
   

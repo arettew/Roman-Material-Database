@@ -151,5 +151,8 @@ EMAIL_PORT = 587
 
 LOGIN_REDIRECT_URL = '/'
 
-from local_settings import *
+try: 
+    from local_settings import *
+except ModuleNotFoundError: 
+    pass
 

@@ -161,10 +161,6 @@ def createEdit(materialType, mainObject, data, user):
       mainAttr = getattr(mainObject, attr)
       editAttr = data[attr]
 
-      if isinstance(mainAttr, basestring): 
-        mainAttr = mainAttr.strip()
-        editAttr = editAttr.strip()
-
       if not mainAttr == editAttr:
         setattr(edit, attr, editAttr)
         attrChanged = True

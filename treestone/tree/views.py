@@ -273,7 +273,7 @@ class TreeUpdateView(LoginRequiredMixin, UpdateView):
 
   def form_valid(self, form):
     tree = Trees.objects.get(pk=self.object.pk)
-    #helper.createEdit('trees', tree, form.cleaned_data, self.request.user)
+    helper.createEdit('trees', tree, form.cleaned_data, self.request.user)
     return HttpResponseRedirect('/success/')
 
 # The view which is used to submit updates to stone objects

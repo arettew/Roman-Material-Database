@@ -86,7 +86,7 @@ function addFeatureData(map, data, featureType) {
             "visibility": "none"
         },
         "paint": {
-            "circle-radius": 5
+            "circle-radius": 10
         }
     });
 }

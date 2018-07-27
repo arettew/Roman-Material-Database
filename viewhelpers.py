@@ -102,8 +102,9 @@ def addUnitsOfMeasurement(attributes):
 
 # Clean up the attribute names for display
 def prettify(attributes): 
+  newAttributes = {}
   for attr in attributes: 
-    newAttr = re.sub("_", " ", attr)
+    newAttr = attr.replace("_", " ")
 
     newAttr = re.sub("tree rad", "trunk radius", newAttr)
     if not "shrinkage" in newAttr:
@@ -115,8 +116,8 @@ def prettify(attributes):
     elif newAttr == "distribution": 
       newAttr = "geographic distribution"
 
-    attributes[newAttr] = attributes.pop(attr)
-  return
+    newAttributes[newAttr] = attributes[attr]
+  return newAttributes
 
 # -----------------------------------------------------------------------
 # Helpers for forms (TreeForm/StoneForm)

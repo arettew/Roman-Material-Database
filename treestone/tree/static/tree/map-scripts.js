@@ -301,9 +301,18 @@ function displayInfo(item) {
 
             //  Adds info to window by crafting info html string
             info += "<h3>" + itemName + "</h3>";
+
+            //  Sorts attributes 
             var attributes = data["attributes"]
             var attributeKeys = Object.keys(attributes)
-            attributeKeys.sort()
+            attributeKeys.sort();
+            if (attributeKeys.includes("dates of use")) {
+                //  Set start, end, dates of use together
+                addToEnd(attributeKeys, "end date");
+                addToEnd(attributeKeys, "dates of use");
+                addToEnd(attributeKeys, "dates notes");
+            }
+
             for (var i = 0; i < attributeKeys.length; i++) {
                 attribute = attributeKeys[i];
                 if (attributes[attribute] == null) {
@@ -345,6 +354,13 @@ function displayInfo(item) {
             alert('There was a failure getting result data.');
         }
     });
+}
+
+// Puts item at end of array 
+function addToEnd(array, item) {
+    var index = array.indexOf(item);
+    array.splice(index, 1);
+    array.push(item);
 }
 
 //  Filters the map so that the feature to be shown is highlighted

@@ -182,8 +182,7 @@ def result_info(request):
   data['user'] = True if request.user.is_authenticated() else False
 
   helper.addUnitsOfMeasurement(attributes)
-  helper.prettify(attributes)
-  data['attributes'] = attributes
+  data['attributes'] = helper.prettify(attributes)
 
   return JsonResponse(data)
 

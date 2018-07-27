@@ -102,36 +102,16 @@
             //  Grabs geoJSON data for each item in the database with an entry in this field
             loadFeatureData('trees');
             loadFeatureData('stones');
-
-            map.addSource('point', {
-                'type': 'geojson',
-                data: {
-                    'type': 'FeatureCollection',
-                    'features': []
-                }
-            });
-
-            map.addLayer({
-                'id': 'point',
-                'source': 'point',
-                'type': 'circle'
-            });
         });
     
         //  Searches for tress/stones based on click 
         map.on('click', function(e) {
-            //  Set point on location of click 
-            //var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
-            //map.getSource('point').setData(point);
 
             var suppressZoomError = false; 
             search(e, suppressZoomError);
         });
 
         geocoder.on('result', function(ev) {
-            //  Set point on location of search 
-            //map.getSource('point').setData(ev.result.geometry);
-
             //  Create object that imitates the result of a mapbox result for clicking 
             var lngLat = {"lng": ev.result.center[0], "lat": ev.result.center[1]};
             var point = map.project(lngLat);

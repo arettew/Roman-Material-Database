@@ -365,8 +365,15 @@ function addToEnd(array, item) {
 
 //  Filters the map so that the feature to be shown is highlighted
 function showFeatureGeography(type, itemName) {
-    map.setFilter(type + "-highlighted", null);
-    map.setFilter(type + "-point", null);
+    map.setFilter("trees-highlighted", null);
+    map.setFilter("trees-point", null);
+    map.setFilter("stones-highlighted", null);
+    map.setFilter("stones-point", null);
+    map.setLayoutProperty("trees-highlighted", 'visibility', 'none');
+    map.setLayoutProperty("stones-highlighted", 'visibility', 'none');
+    map.setLayoutProperty("trees-point", 'visibility', 'none');
+    map.setLayoutProperty("stones-point", 'visibility', 'none');
+
     map.setFilter(type + "-point", ['all', ['==', '$type', 'Point'], ['==', 'name', itemName]]);
     map.setFilter(type + "-highlighted", ['all', ['==', '$type', 'Polygon'], ['==', 'name', itemName]]);
     map.setLayoutProperty(type + "-highlighted", 'visibility', 'visible');

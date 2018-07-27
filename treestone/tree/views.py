@@ -270,26 +270,24 @@ class TreeUpdateView(LoginRequiredMixin, UpdateView):
   # Any changes to fields will need to include a corresponding attribute in the TreeEdits model
   form_class = TreeForm
   template_name = 'tree/update-form.html'
-  success_url = '/success/'
 
   def form_valid(self, form):
     tree = Trees.objects.get(pk=self.object.pk)
     helper.createEdit('trees', tree, form.cleaned_data, self.request.user)
-    return HttpResponseRedirect('self.get_success_url()')
+    return HttpResponseRedirect('/success/')
 
 # The view which is used to submit updates to stone objects
 class StoneUpdateView(LoginRequiredMixin, UpdateView):
   model = Stones 
   form_class = StoneForm
   template_name = 'tree/update-form.html'
-  success_url = '/success/'
 
   def form_valid(self, form):
     edit = StoneEdits()
     stone = Stones.objects.get(pk=self.object.pk)
     helper.createEdit('stones', stone, form.cleaned_data, self.request.user)
 
-    return HttpResponseRedirect(self.get_success_url())
+    return HttpResponseRedirect('/success/')
 
 # The view which displays a list of all proposed edits 
 class EditListView(UserPassesTestMixin, LoginRequiredMixin, ListView):

@@ -60,7 +60,7 @@ function addFeatureData(map, data, featureType) {
             "fill-color": "#888888",
             //  The goal is to make this effectively invisible, but layer must be  set to 
             //  visible in order to be able to query
-            "fill-opacity": 0.01
+            "fill-opacity": 0.0001
         }
     });
 

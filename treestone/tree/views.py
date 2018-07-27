@@ -285,7 +285,7 @@ class StoneUpdateView(LoginRequiredMixin, UpdateView):
   def form_valid(self, form):
     edit = StoneEdits()
     stone = Stones.objects.get(pk=self.object.pk)
-    #helper.createEdit('stones', stone, form.cleaned_data, self.request.user)
+    helper.createEdit('stones', stone, form.cleaned_data, self.request.user)
 
     return HttpResponseRedirect('/success/')
 

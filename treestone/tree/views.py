@@ -387,3 +387,16 @@ class RejectView(FormView):
 
 class SuccessView(TemplateView):
   template_name = 'tree/success.html'
+
+class SearchView(TemplateView): 
+  template_name = "tree/search.html"
+
+  def get_context_data(self):
+    context = super(SearchView, self).get_context_data()
+    query = self.request.GET.get('q')
+    if query:
+      context.update({
+        'tree_list': Trees.objects.filter(common_name__icontains=query),
+        'stone_list': Stones.objects.filter(name__icontains=query)
+      })
+    return context

@@ -1,0 +1,55 @@
+body {
+    background: lightblue;
+}
+
+html,body {
+    height:100%;
+}
+
+#container {
+    height: 100%;
+}
+
+#search-container {
+    width: 47%; 
+    height: 90%;
+    float: left;
+    padding: 5px; 
+    overflow: auto; 
+}
+
+#results-container {
+    width: 47%;
+    height: 90%; 
+    float: right; 
+    padding: 5px;
+    overflow: auto;
+}
+
+.overlay {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 3px;
+    padding: 5px; 
+}   
+
+#search {
+    width: 80%;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+}
+
+.tab button:hover {
+    background-color: #aaaaaa;
+}
+
+.tabcontent img {
+    display: block;
+    width: 50%;
+    height: 190px;
+}

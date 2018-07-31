@@ -1,0 +1,79 @@
+<html>
+    <head>
+        {% load static %}
+        <!--- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'tree/search-styles.css' %}">
+
+        <!-- Jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!--  JS -->
+        <script src="{% static 'tree/map-scripts.js' %}"></script>
+    </head>
+
+    <div class="overlay" id="search-container">
+        <form method="get">
+            <button type="submit">search</button>
+            <input id="search" name="q" type="text" placeholder="search">
+            <hr>
+            {% if tree_list %}
+                <h3>Trees</h3>
+            {% endif %}
+            {% for tree in tree_list %}
+                <li data-type="trees" onclick="displayInfo(this)">{{tree}}</li>
+            {% endfor %}
+            {% if stone_list %}
+                <h3>Stones</h3>
+            {% endif %}
+            {% for stone in stone_list %}
+                <li data-type="stones" onclick="displayInfo(item)">{{stone}}</li>
+            {% endfor %}
+        </form>
+    </div>
+    <div class="overlay" id="results-container"></div>
+</html>
+
+<script>
+    function displayInfo(item) {
+        var itemName = item.textContent;
+        var type = item.getAttribute('data-type');
+        $.ajax({
+        url: '/result_info/',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            'itemName': itemName,
+            'itemType': type
+        },
+        success: function(data) {
+            //  Adds info to window by crafting info html string
+            info = "<h3>" + itemName + "</h3>";
+
+            //  Sorts attributes 
+            var attributes = data["attributes"]
+            var attributeKeys = getSortedAttributes(attributes);
+
+            info += getDisplayHtml(attributes, attributeKeys, type, data);
+            //  Display
+            $("#results-container").html(info);
+
+            //  Move links to correct locations 
+            $('.right').css('text-align', 'right')
+            $('.right').css('float', 'right')
+            $('.left').css('text-align', 'left')
+            $('.left').css('float', 'left')
+
+            var imageUrls = data["image_urls"];
+            if (imageUrls != undefined && imageUrls.length > 0) {
+                htmlString = $("#results-container").html()
+                htmlString += "<br><hr><div id='picture-box'><div class='tab'></div></div>"
+                $("#results-container").html(htmlString);
+                showImages(imageUrls);
+            }
+        },
+        failure: function(data) {
+            alert('There was a failure getting result data.');
+        }
+    });
+    }
+</script>

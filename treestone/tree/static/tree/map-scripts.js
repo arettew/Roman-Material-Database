@@ -304,31 +304,8 @@ function displayInfo(item) {
 
             //  Sorts attributes 
             var attributes = data["attributes"]
-            var attributeKeys = Object.keys(attributes)
-            attributeKeys.sort();
-            if (attributeKeys.includes("dates of use")) {
-                //  Set start, end, dates of use together
-                addToEnd(attributeKeys, "end date");
-                addToEnd(attributeKeys, "dates of use");
-                addToEnd(attributeKeys, "dates notes");
-            }
-
-            for (var i = 0; i < attributeKeys.length; i++) {
-                attribute = attributeKeys[i];
-                if (attributes[attribute] == null) {
-                    // Prefer an empty string to a null value 
-                    attributes[attribute] = "";
-                }
-                info += "<b>" + attribute + "</b></br>";
-                info += "<p>" + attributes[attribute] + "</p> ";
-            }
-            //  Add links to geojson download and edit
-            var downloadLink = "/geojson/" + type + "/" + data["pk"]
-            info += "<br><div class='left'><a href='" + downloadLink + "'>Download GeoJSON</a></div>"
-            if (data["user"]) {
-                var editLink = "/" + type + "/edit/" + data["pk"] + "/"
-                info += "<div class='right'><a href='" + editLink + "'>Edit</a></div>"
-            }
+            var attributeKeys = getSortedAttributes(attributes);
+            info += getDisplayHtml(attributes, attributeKeys, type, data);
             //  Display
             $("#info-box").html(info);
             $("#info-box").show();
@@ -344,6 +321,9 @@ function displayInfo(item) {
             //  Shows images if they exist 
             imageUrls = data["image_urls"];
             if (imageUrls != undefined && imageUrls.length > 0) {
+                //  Set up picture-box to have a close button and prepare it to change the HTML 
+                //  within tab div
+                $("#picture-box").html(getCloseHtml() + "<div class='tab'></div>");
                 showImages(imageUrls);
             }
             else {
@@ -355,6 +335,44 @@ function displayInfo(item) {
         }
     });
 }
+
+//  Sorts attributes for display 
+function getSortedAttributes(attributes) {
+    attributeKeys = Object.keys(attributes)
+    attributeKeys.sort();
+    if (attributeKeys.includes("dates of use")) {
+        //  Set start, end, dates of use together
+        addToEnd(attributeKeys, "end date");
+        addToEnd(attributeKeys, "dates of use");
+        addToEnd(attributeKeys, "dates notes");
+    }
+
+    return attributeKeys;
+}
+
+//  Create display HTML 
+function getDisplayHtml(attributes, attributeKeys, type, data) {
+    var htmlString = "";
+    for (var i = 0; i < attributeKeys.length; i++) {
+        attribute = attributeKeys[i];
+        if (attributes[attribute] == null) {
+            // Prefer an empty string to a null value 
+            attributes[attribute] = "";
+        }
+        htmlString += "<b>" + attribute + "</b></br>";
+        htmlString += "<p>" + attributes[attribute] + "</p> ";
+    }
+    //  Add links to geojson download and edit
+    var downloadLink = "/geojson/" + type + "/" + data["pk"]
+    htmlString += "<br><div class='left'><a href='" + downloadLink + "'>Download GeoJSON</a></div>"
+    if (data["user"]) {
+        var editLink = "/" + type + "/edit/" + data["pk"] + "/"
+        htmlString += "<div class='right'><a href='" + editLink + "'>Edit</a></div>"
+    }
+
+    return htmlString; 
+}
+
 
 // Puts item at end of array 
 function addToEnd(array, item) {
@@ -382,10 +400,6 @@ function showFeatureGeography(type, itemName) {
 
 //  Shows the images associated with a search result. 
 function showImages(image_urls) {
-    //  Set up picture-box to have a close button and prepare it to change the HTML 
-    //  within tab div
-    $("#picture-box").html(getCloseHtml() + "<div class='tab'></div>");
-
     htmlString = "";
     //  Create the tab buttons 
     for (var i = 0; i < image_urls.length; i++) {
@@ -394,7 +408,7 @@ function showImages(image_urls) {
     
     //  Create the tab content, loading the pictures  
     for (var i = 0; i < image_urls.length; i++) {
-        htmlString += "<div id=Img" + (i+1) + " class='tabcontent'>";
+        htmlString += "<div id=Img" + (i+1) + " class='tabcontent'><br>";
 
         var url = image_urls[i];
         htmlString += "<a href='" + url + "' download> <img src=" + url + "></a>";
